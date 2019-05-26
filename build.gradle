@@ -25,3 +25,20 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    supportLibVersion = '25.3.1'
+    retrofitVersion = '2.1.0'
+    gsonConverterVersion = '2.1.0'
+    archVersion = '1.1.1'
+
+    supportLibAppCompat = "com.android.support:appcompat-v7:$supportLibVersion"
+    supportLibDesign = "com.android.support:design:$supportLibVersion"
+    archRuntime = "android.arch.lifecycle:runtime:$archVersion"
+    archExtension = "android.arch.lifecycle:extensions:$archVersion"
+    archCompiler = "android.arch.lifecycle:compiler:$archVersion"
+    roomRuntime = "android.arch.persistence.room:runtime:$archVersion"
+    roomCompiler = "android.arch.persistence.room:compiler:$archVersion"
+    retrofit = "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    gsonConverter = "com.squareup.retrofit2:converter-gson:$gsonConverterVersion"
+}
