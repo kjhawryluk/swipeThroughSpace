@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class NasaImageRepository {
         this.mImageDetailsDao = this.mNasaImageDatabase.mImageDetailsDao();
         this.mQueryDao = this.mNasaImageDatabase.mQueryDao();
         this.mNasaImageRestService = getNasaImageRestService();
+        this.mQueriedImages = new MutableLiveData<>();
     }
 
     public static NasaImageRepository getInstance(Application application) {
@@ -64,16 +66,19 @@ public class NasaImageRepository {
 
     /**
      * Initial image query on page 1.
+     *
      * @param query
      */
-    public void queryImages(final String query){
+    public void queryImages(final String query) {
+        if (query == null || query.isEmpty())
+            return;
         List<ImageDetails> prevPageImages = new ArrayList<>();
         int pageNum = 1;
         queryImages(query, pageNum, prevPageImages);
     }
 
     private void queryImages(final String query, final int pageNum, final List<ImageDetails> prevPageImages) {
-        mNasaImageRestService.searchImages(query,pageNum,MEDIA_TYPE)
+        mNasaImageRestService.searchImages(query, pageNum, MEDIA_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<NasaImageQueryResponse>() {
@@ -86,13 +91,17 @@ public class NasaImageRepository {
                     public void onSuccess(NasaImageQueryResponse queryResponse) {
                         List<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
                         prevPageImages.addAll(imageDetailList);
-                        int nextPageNum = queryResponse.getNextPageNum(pageNum);
-                        if (nextPageNum > -1){
-                            queryImages(query, nextPageNum, prevPageImages);
-                        } else{
-                            // Update UI
+
+                        // Update the image list even before all the pages have been processed.
+                        if (mQueriedImages != null && prevPageImages != null)
                             mQueriedImages.setValue(prevPageImages);
-                            saveQuery(query);
+
+                        int nextPageNum = queryResponse.getNextPageNum(pageNum);
+                        if (nextPageNum > -1) {
+                            queryImages(query, nextPageNum, prevPageImages);
+                        } else {
+                            // Update UI
+                            new SaveQueryAsyncTask(mQueryDao).execute(query);
                         }
                     }
 
@@ -100,30 +109,41 @@ public class NasaImageRepository {
                     public void onError(Throwable e) {
                         Log.e("RESPONSE ERROR", e.getMessage());
                         // Update with partial results.
-                        if(prevPageImages != null && prevPageImages.size() > 0){
+                        if (prevPageImages != null && prevPageImages.size() > 0) {
                             mQueriedImages.setValue(prevPageImages);
-                            saveQuery(query);
+                            new SaveQueryAsyncTask(mQueryDao).execute(query);
                         }
                     }
 
                 });
     }
 
-    private void saveQuery(String query){
-        long millis = System.currentTimeMillis();
-        ImageQuery imageQuery = new ImageQuery(millis, query);
-        mQueryDao.saveQuery(imageQuery);
+    private static class SaveQueryAsyncTask extends AsyncTask<String, Void, Void> {
+
+        private QueryDao mQueryDao;
+
+        SaveQueryAsyncTask(QueryDao dao) {
+            mQueryDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final String... params) {
+            long millis = System.currentTimeMillis();
+            ImageQuery imageQuery = new ImageQuery(millis, params[0]);
+            mQueryDao.saveQuery(imageQuery);
+            return null;
+        }
     }
 
-    public LiveData<List<ImageDetails>> loadFavoriteImages(){
+    public LiveData<List<ImageDetails>> loadFavoriteImages() {
         return mImageDetailsDao.loadFavoriteImages();
     }
 
-    public LiveData<List<ImageQuery>> loadQueryHistory(){
+    public LiveData<List<ImageQuery>> loadQueryHistory() {
         return mQueryDao.loadQueryHistory();
     }
 
-    public LiveData<ImageQuery> getMostRecentQuery(){
+    public LiveData<ImageQuery> getMostRecentQuery() {
         return mQueryDao.getMostRecentQuery();
     }
 

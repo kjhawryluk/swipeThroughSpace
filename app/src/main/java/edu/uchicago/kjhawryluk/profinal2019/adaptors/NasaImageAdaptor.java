@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 import edu.uchicago.kjhawryluk.profinal2019.R;
@@ -43,7 +45,12 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
     public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
         if(mImageDetails != null){
             final ImageDetails current = mImageDetails.get(position);
-            holder.spaceImage.setImageURI(current.getUri());
+            Glide.with(mInflater.getContext())
+                    .load(current.getUri())
+                    .placeholder(R.drawable.ic_alien_head)
+                    .error(R.drawable.ic_sad_green_alien_whatface)
+                    .dontAnimate()
+                    .into(holder.spaceImage);
         }
     }
 

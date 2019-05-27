@@ -8,14 +8,12 @@
     tools:context=".MainActivity">
 
 
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView"
+    <android.support.v7.widget.SearchView
+        android:id="@+id/searchBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="AutoCompleteTextView"
+        android:layout_height="match_parent"
         android:padding="16dp"
-        android:layout_margin="16dp"
-        />
+        android:layout_margin="16dp"/>
 
     <fragment
         android:id="@+id/fragment"

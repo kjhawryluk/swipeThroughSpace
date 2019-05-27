@@ -28,13 +28,6 @@ public class ContainerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_container, container, false);
-        spaceImage = root.findViewById(R.id.spaceImage);
-        Glide.with(this)
-                .load("https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000118/GSFC_20171208_Archive_e000118~orig.png")
-                .placeholder(R.drawable.ic_alien_head)
-                .error(R.drawable.ic_sad_green_alien_whatface)
-                .dontAnimate()
-                .into(spaceImage);
         return root;
     }
 /**

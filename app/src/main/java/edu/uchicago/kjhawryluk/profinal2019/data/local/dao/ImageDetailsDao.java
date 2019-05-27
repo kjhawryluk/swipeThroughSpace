@@ -1,6 +1,7 @@
 package edu.uchicago.kjhawryluk.profinal2019.data.local.dao;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -12,6 +13,7 @@ import java.util.List;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 
+@Dao
 public interface ImageDetailsDao {
     @Query("SELECT * FROM FavoriteImages ORDER BY title")
     LiveData<List<ImageDetails>> loadFavoriteImages();

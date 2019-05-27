@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 public class ImageQuery {
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    private String id;
+    private int id;
 
     @NonNull
     private long queryTimestamp;
@@ -19,7 +19,7 @@ public class ImageQuery {
     private String query;
 
     @NonNull
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -31,7 +31,7 @@ public class ImageQuery {
         this.query = query;
     }
 
-    public void setId(@NonNull String id) {
+    public void setId(@NonNull int id) {
         this.id = id;
     }
 
