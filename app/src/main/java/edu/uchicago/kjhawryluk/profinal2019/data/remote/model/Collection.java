@@ -16,6 +16,9 @@ public class Collection {
     @SerializedName("items")
     @Expose
     private List<Item> items = null;
+    @SerializedName("links")
+    @Expose
+    private List<Link> links = null;
     @SerializedName("href")
     @Expose
     private String href;
@@ -52,4 +55,11 @@ public class Collection {
         this.href = href;
     }
 
+    public List<Link> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<Link> links) {
+        this.links = links;
+    }
 }

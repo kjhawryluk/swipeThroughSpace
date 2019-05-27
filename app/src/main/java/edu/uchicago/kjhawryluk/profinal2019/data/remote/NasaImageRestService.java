@@ -12,6 +12,6 @@ import retrofit2.http.Query;
 public interface NasaImageRestService {
     @GET
     Single<NasaImageQueryResponse> searchImages(@Query("q") String query,
-                                                @Query("page") String page,
+                                                @Query("page") int page,
                                                 @Query("media_type") String mediaType);
 }
