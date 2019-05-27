@@ -1,6 +1,7 @@
 package edu.uchicago.kjhawryluk.profinal2019.data;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -14,6 +15,7 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.NasaImageDatabase;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.dao.ImageDetailsDao;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.dao.QueryDao;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
+import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.NasaImageRestService;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.model.Item;
@@ -45,6 +47,12 @@ public class NasaImageRepository {
         this.mNasaImageRestService = getNasaImageRestService();
     }
 
+    public static NasaImageRepository getInstance(Application application) {
+        if (mInstance == null)
+            mInstance = new NasaImageRepository(application);
+        return mInstance;
+    }
+
     private NasaImageRestService getNasaImageRestService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(ApiConstants.QUERY_ENDPOINT)
@@ -58,7 +66,7 @@ public class NasaImageRepository {
      * Initial image query on page 1.
      * @param query
      */
-    private void queryImages(final String query){
+    public void queryImages(final String query){
         List<ImageDetails> prevPageImages = new ArrayList<>();
         int pageNum = 1;
         queryImages(query, pageNum, prevPageImages);
@@ -84,6 +92,7 @@ public class NasaImageRepository {
                         } else{
                             // Update UI
                             mQueriedImages.setValue(prevPageImages);
+                            saveQuery(query);
                         }
                     }
 
@@ -93,10 +102,33 @@ public class NasaImageRepository {
                         // Update with partial results.
                         if(prevPageImages != null && prevPageImages.size() > 0){
                             mQueriedImages.setValue(prevPageImages);
+                            saveQuery(query);
                         }
                     }
 
                 });
+    }
+
+    private void saveQuery(String query){
+        long millis = System.currentTimeMillis();
+        ImageQuery imageQuery = new ImageQuery(millis, query);
+        mQueryDao.saveQuery(imageQuery);
+    }
+
+    public LiveData<List<ImageDetails>> loadFavoriteImages(){
+        return mImageDetailsDao.loadFavoriteImages();
+    }
+
+    public LiveData<List<ImageQuery>> loadQueryHistory(){
+        return mQueryDao.loadQueryHistory();
+    }
+
+    public LiveData<ImageQuery> getMostRecentQuery(){
+        return mQueryDao.getMostRecentQuery();
+    }
+
+    public MutableLiveData<List<ImageDetails>> getQueriedImages() {
+        return mQueriedImages;
     }
 
     /**

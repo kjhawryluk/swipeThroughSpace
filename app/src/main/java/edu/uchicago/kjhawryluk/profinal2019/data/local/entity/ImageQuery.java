@@ -23,6 +23,14 @@ public class ImageQuery {
         return id;
     }
 
+    public ImageQuery() {
+    }
+
+    public ImageQuery(long queryTimestamp, String query) {
+        this.queryTimestamp = queryTimestamp;
+        this.query = query;
+    }
+
     public void setId(@NonNull String id) {
         this.id = id;
     }
