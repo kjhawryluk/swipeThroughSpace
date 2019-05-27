@@ -103,6 +103,7 @@ public class NasaImageRepository {
                             // Update UI
                             new SaveQueryAsyncTask(mQueryDao).execute(query);
                         }
+
                     }
 
                     @Override

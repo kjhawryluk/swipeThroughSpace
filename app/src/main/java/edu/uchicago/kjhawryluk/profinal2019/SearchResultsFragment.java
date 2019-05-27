@@ -12,6 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.ListPreloader;
+import com.bumptech.glide.ListPreloader.*;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
+import com.bumptech.glide.util.FixedPreloadSizeProvider;
+import com.bumptech.glide.util.ViewPreloadSizeProvider;
+
 import java.util.List;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
@@ -44,8 +51,16 @@ public class SearchResultsFragment extends Fragment {
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
         mSearchResultsRecyclerView = root.findViewById(R.id.searchResultsRecyclerView);
 
-        // Initialize adaptor
+        PreloadSizeProvider sizeProvider =
+                new ViewPreloadSizeProvider();
         final NasaImageAdaptor adaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
+        RecyclerViewPreloader<ImageDetails> preloader =
+                new RecyclerViewPreloader<>(
+                        Glide.with(this), adaptor, sizeProvider, 10 /*maxPreload*/);
+
+        mSearchResultsRecyclerView.addOnScrollListener(preloader);
+
+        // Initialize adaptor
 
         // Bind Recycler to adaptor
         mSearchResultsRecyclerView.setAdapter(adaptor);
