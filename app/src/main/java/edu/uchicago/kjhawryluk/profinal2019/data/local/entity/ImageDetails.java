@@ -4,13 +4,20 @@ package edu.uchicago.kjhawryluk.profinal2019.data.local.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.typeconverters.ListConverter;
+
+import static edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants.DEFAULT_SIZE;
+import static edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants.IMAGE_BASE_URI;
+
 @Entity(tableName = "FavoriteImages")
 public class ImageDetails {
 
@@ -128,4 +135,12 @@ public class ImageDetails {
         this.keywords = keywords;
     }
 
+    public Uri getUri(){
+        return getUri(DEFAULT_SIZE);
+    }
+
+    public Uri getUri(String size){
+        String uriString = String.format(IMAGE_BASE_URI, nasaId, size);
+        return Uri.parse(uriString);
+    }
 }

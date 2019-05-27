@@ -8,6 +8,15 @@
     tools:context=".MainActivity">
 
 
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="AutoCompleteTextView"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        />
+
     <fragment
         android:id="@+id/fragment"
         android:name="edu.uchicago.kjhawryluk.profinal2019.ContainerFragment"
