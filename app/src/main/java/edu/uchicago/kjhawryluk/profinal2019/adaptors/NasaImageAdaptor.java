@@ -2,6 +2,7 @@ package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
     public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
         if(mImageDetails != null){
             final ImageDetails current = mImageDetails.get(position);
+            Log.i("image uri",current.getUri().toString());
             Glide.with(mInflater.getContext())
                     .load(current.getUri())
                     .placeholder(R.drawable.ic_alien_head)

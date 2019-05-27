@@ -140,7 +140,7 @@ public class ImageDetails {
     }
 
     public Uri getUri(String size){
-        String uriString = String.format(IMAGE_BASE_URI, nasaId, size);
+        String uriString = String.format(IMAGE_BASE_URI, nasaId, nasaId, size);
         return Uri.parse(uriString);
     }
 }
