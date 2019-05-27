@@ -7,17 +7,10 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-
-    <android.support.v7.widget.SearchView
-        android:id="@+id/searchBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:layout_margin="16dp"/>
-
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/fragContainer"
         android:name="edu.uchicago.kjhawryluk.profinal2019.ContainerFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="90" />
 </LinearLayout>
