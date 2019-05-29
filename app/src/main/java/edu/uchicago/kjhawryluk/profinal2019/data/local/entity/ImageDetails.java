@@ -2,6 +2,7 @@
 package edu.uchicago.kjhawryluk.profinal2019.data.local.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.net.Uri;
@@ -54,6 +55,16 @@ public class ImageDetails {
     @SerializedName("keywords")
     @Expose
     private List<String> keywords = null;
+
+    @TypeConverters({ListConverter.class})
+    @SerializedName("imageUris")
+    @Expose
+    private List<String> imageUris;
+
+    private String metaUri;
+
+    @Ignore
+    private Uri uriToShow;
 
     public String getCenter() {
         return center;
@@ -142,5 +153,43 @@ public class ImageDetails {
     public Uri getUri(String size){
         String uriString = String.format(IMAGE_BASE_URI, nasaId, nasaId, size);
         return Uri.parse(uriString);
+    }
+
+    public void setImageUriToShow(){
+        String[] imageSizeOptionsInOrder = {"small", "medium", "large", "orig"};
+        if(imageUris != null)
+            for(String imageSize : imageSizeOptionsInOrder){
+                for(String uri : imageUris){
+                    if(uri.contains(imageSize))
+                    {
+                        uriToShow = Uri.parse(uri);
+                        return;
+                    }
+                }
+            }
+    }
+
+    public List<String> getImageUris() {
+        return imageUris;
+    }
+
+    public void setImageUris(List<String> imageUris) {
+        this.imageUris = imageUris;
+    }
+
+    public Uri getUriToShow() {
+        return uriToShow;
+    }
+
+    public void setUriToShow(Uri uriToShow) {
+        this.uriToShow = uriToShow;
+    }
+
+    public String getMetaUri() {
+        return metaUri;
+    }
+
+    public void setMetaUri(String metaUri) {
+        this.metaUri = metaUri;
     }
 }

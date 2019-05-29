@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.local.NasaImageDatabase;
@@ -19,12 +20,13 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.NasaImageRestService;
-import edu.uchicago.kjhawryluk.profinal2019.data.remote.model.Item;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.model.NasaImageQueryResponse;
+import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -92,16 +94,12 @@ public class NasaImageRepository {
                         List<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
                         prevPageImages.addAll(imageDetailList);
 
-                        // Update the image list even before all the pages have been processed.
-                        if (mQueriedImages != null && prevPageImages != null)
-                            mQueriedImages.setValue(prevPageImages);
-
                         int nextPageNum = queryResponse.getNextPageNum(pageNum);
                         if (nextPageNum > -1) {
                             queryImages(query, nextPageNum, prevPageImages);
                         } else {
                             // Update UI
-                            new SaveQueryAsyncTask(mQueryDao).execute(query);
+                            mQueriedImages.setValue(prevPageImages);
                         }
 
                     }
@@ -110,10 +108,7 @@ public class NasaImageRepository {
                     public void onError(Throwable e) {
                         Log.e("RESPONSE ERROR", e.getMessage());
                         // Update with partial results.
-                        if (prevPageImages != null && prevPageImages.size() > 0) {
-                            mQueriedImages.setValue(prevPageImages);
-                            new SaveQueryAsyncTask(mQueryDao).execute(query);
-                        }
+                        mQueriedImages.setValue(prevPageImages);
                     }
 
                 });
@@ -135,6 +130,43 @@ public class NasaImageRepository {
             return null;
         }
     }
+
+    private class FetchImageUrlsAsyncTask extends AsyncTask<ImageDetails, Void, List<ImageDetails>> {
+
+        private  NasaImageRestService mNasaImageRestService;
+        private String mQuery;
+
+        FetchImageUrlsAsyncTask( NasaImageRestService nasaImageRestService, String query) {
+            mNasaImageRestService = nasaImageRestService;
+            mQuery = query;
+        }
+
+        @Override
+        protected List<ImageDetails> doInBackground(final ImageDetails... params) {
+            List<ImageDetails> updatedDetails = new ArrayList<>();
+            for (ImageDetails imageDetails : params) {
+                String metaUri = imageDetails.getMetaUri();
+                if(metaUri != null){
+                    List<String> uris = mNasaImageRestService.getLinks(metaUri).blockingGet();
+                    imageDetails.setImageUris(uris);
+                    imageDetails.setImageUriToShow();
+                    updatedDetails.add(imageDetails);
+                }
+            }
+          return updatedDetails;
+        }
+
+        @Override
+        protected void onPostExecute(List<ImageDetails> imageDetails) {
+            super.onPostExecute(imageDetails);
+            // Update the image list even before all the pages have been processed.
+            if (mQueriedImages != null && imageDetails != null)
+                mQueriedImages.setValue(imageDetails);
+            new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
+        }
+//TODO:: Add function for post processing.
+    }
+
 
     public LiveData<List<ImageDetails>> loadFavoriteImages() {
         return mImageDetailsDao.loadFavoriteImages();

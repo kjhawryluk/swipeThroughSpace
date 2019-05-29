@@ -76,7 +76,6 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
     public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
         if(mImageDetails != null){
             final ImageDetails current = mImageDetails.get(position);
-            Log.i("image uri",current.getUri().toString());
             Glide.with(mInflater.getContext())
                     .load(current.getUri())
                     .diskCacheStrategy(DiskCacheStrategy.DATA)

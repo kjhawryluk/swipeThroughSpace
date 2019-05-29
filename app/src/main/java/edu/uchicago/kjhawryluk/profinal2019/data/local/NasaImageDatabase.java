@@ -15,7 +15,7 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.profinal2019.data.typeconverters.ListConverter;
 
-@Database(entities = {ImageDetails.class, ImageQuery.class},version = 1)
+@Database(entities = {ImageDetails.class, ImageQuery.class},version = 2)
 @TypeConverters({ListConverter.class})
 public abstract class NasaImageDatabase extends RoomDatabase{
     public abstract ImageDetailsDao mImageDetailsDao();

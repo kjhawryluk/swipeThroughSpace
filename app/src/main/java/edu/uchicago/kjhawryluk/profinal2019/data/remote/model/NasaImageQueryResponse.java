@@ -24,14 +24,16 @@ public class NasaImageQueryResponse {
     }
 
     public List<ImageDetails> getAllImageDetails() {
-        ArrayList<ImageDetails> imageDetails = new ArrayList<>();
+        ArrayList<ImageDetails> imageDetailsList = new ArrayList<>();
         for (Item item : collection.getItems()) {
             List<ImageDetails> data = item.getData();
             if (data != null && data.size() > 0) {
-                imageDetails.add(item.getData().get(0));
+                ImageDetails imageDetails = item.getData().get(0);
+                imageDetails.setMetaUri(item.getHref());
+                imageDetailsList.add(imageDetails);
             }
         }
-        return imageDetails;
+        return imageDetailsList;
     }
 
     public int getNextPageNum(int currentPageNum) {
