@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,7 +65,7 @@ public class SearchResultsFragment extends Fragment {
 
         // Bind Recycler to adaptor
         mSearchResultsRecyclerView.setAdapter(adaptor);
-        mSearchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        mSearchResultsRecyclerView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
 
         // Listen for updates
         mNasaImageViewModel.getQueriedImages().observe(this, new Observer<List<ImageDetails>>() {

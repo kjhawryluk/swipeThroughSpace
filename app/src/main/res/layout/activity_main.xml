@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/fragContainer"
         android:name="edu.uchicago.kjhawryluk.profinal2019.ContainerFragment"
         android:layout_width="match_parent"

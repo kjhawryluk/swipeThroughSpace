@@ -1,6 +1,7 @@
 package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -19,6 +20,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+
 import edu.uchicago.kjhawryluk.profinal2019.R;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
@@ -46,6 +49,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
                         .load(imageDetails.getUri())
                         .diskCacheStrategy(DiskCacheStrategy.DATA)
                         .placeholder(R.drawable.ic_alien_head)
+                        .override(1000, 1000)
                         .error(R.drawable.ic_sad_green_alien_whatface)
                         .dontAnimate();
     }
@@ -79,6 +83,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
             Glide.with(mInflater.getContext())
                     .load(current.getUri())
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .override(1000, 1000)
                     .placeholder(R.drawable.ic_alien_head)
                     .error(R.drawable.ic_sad_green_alien_whatface)
                     .dontAnimate()

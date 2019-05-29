@@ -28,15 +28,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mNasaImageViewModel = new NasaImageViewModel(this.getApplication());
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchBar = findViewById(R.id.searchBar);
-        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-        swapInFragment(searchResultsFragment);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             mNasaImageViewModel.queryNasaImages(query);
+            SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+            swapInFragment(searchResultsFragment);
         }
     }
 
