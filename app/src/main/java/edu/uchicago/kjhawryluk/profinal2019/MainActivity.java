@@ -30,10 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mNasaImageViewModel = new NasaImageViewModel(this.getApplication());
         mSearchBar = findViewById(R.id.searchBar);
-        FrameLayout f = findViewById(R.id.fragContainer);
-
-        f.setOnTouchListener(new OnSwipeTouchListener(this));
-
     }
 
     @Override

@@ -18,18 +18,20 @@ public class NasaImageViewModel extends AndroidViewModel {
     private LiveData<List<ImageDetails>> mFavoriteImages;
     private LiveData<ImageQuery> mMostRecentQuery;
     private LiveData<List<ImageQuery>> mQueryHistory;
+    private MutableLiveData<ImageDetails> mTopImageOfStack;
     private MutableLiveData<Stack<ImageDetails>> mQueriedImages;
 
-    public NasaImageViewModel(@NonNull Application application){
+    public NasaImageViewModel(@NonNull Application application) {
         super(application);
         mNasaImageRepository = NasaImageRepository.getInstance(application);
         mMostRecentQuery = mNasaImageRepository.getMostRecentQuery();
         mQueryHistory = mNasaImageRepository.loadQueryHistory();
         mFavoriteImages = mNasaImageRepository.loadFavoriteImages();
         mQueriedImages = mNasaImageRepository.getQueriedImages();
+        mTopImageOfStack = mNasaImageRepository.getTopImageOfStack();
     }
 
-    public void queryNasaImages(String query){
+    public void queryNasaImages(String query) {
         mNasaImageRepository.queryImages(query);
     }
 
@@ -47,5 +49,13 @@ public class NasaImageViewModel extends AndroidViewModel {
 
     public MutableLiveData<Stack<ImageDetails>> getQueriedImages() {
         return mQueriedImages;
+    }
+
+    public void popImage() {
+        mNasaImageRepository.popImage();
+    }
+
+    public MutableLiveData<ImageDetails> getTopImageOfStack() {
+        return mTopImageOfStack;
     }
 }

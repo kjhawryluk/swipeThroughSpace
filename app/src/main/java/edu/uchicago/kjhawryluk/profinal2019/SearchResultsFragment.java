@@ -52,15 +52,7 @@ public class SearchResultsFragment extends Fragment {
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
         mSearchResultsRecyclerView = root.findViewById(R.id.searchResultsRecyclerView);
 
-        PreloadSizeProvider sizeProvider =
-                new ViewPreloadSizeProvider();
         final NasaImageAdaptor adaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
-        RecyclerViewPreloader<ImageDetails> preloader =
-                new RecyclerViewPreloader<>(
-                        Glide.with(this), adaptor, sizeProvider, 10 /*maxPreload*/);
-
-        mSearchResultsRecyclerView.addOnScrollListener(preloader);
-
         // Initialize adaptor
 
         // Bind Recycler to adaptor
@@ -68,13 +60,14 @@ public class SearchResultsFragment extends Fragment {
         mSearchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
 
         // Listen for updates
-        mNasaImageViewModel.getQueriedImages().observe(this, new Observer<Stack<ImageDetails>>() {
+        mNasaImageViewModel.getTopImageOfStack().observe(this, new Observer<ImageDetails>() {
             @Override
-            public void onChanged(@Nullable Stack<ImageDetails> imageDetails) {
+            public void onChanged(@Nullable ImageDetails imageDetails) {
+
                 adaptor.setImageDetails(imageDetails);
             }
         });
-
+        mSearchResultsRecyclerView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()));
         return root;
     }
 

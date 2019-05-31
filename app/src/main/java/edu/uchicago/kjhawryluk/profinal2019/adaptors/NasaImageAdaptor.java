@@ -1,68 +1,38 @@
 package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.ListPreloader;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.Stack;
 
-import edu.uchicago.kjhawryluk.profinal2019.OnSwipeTouchListener;
 import edu.uchicago.kjhawryluk.profinal2019.R;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
-public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.NasaImageViewHolder> implements ListPreloader.PreloadModelProvider<ImageDetails>{
+public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.NasaImageViewHolder> {
     private final LayoutInflater mInflater;
     private final NasaImageViewModel mNasaImageViewModel;
-    private Stack<ImageDetails> mImageDetails;
-
-    @Override
-    @NonNull
-    public List<ImageDetails> getPreloadItems(int position){
-        ImageDetails url = mImageDetails.get(position);
-        if (url == null) {
-            return Collections.emptyList();
-        }
-        return Collections.singletonList(url);
-    }
-
-    @Nullable
-    @Override
-    public RequestBuilder getPreloadRequestBuilder(@NonNull ImageDetails imageDetails) {
-        return
-                Glide.with(mInflater.getContext())
-                        .load(imageDetails.getUri())
-                        .diskCacheStrategy(DiskCacheStrategy.DATA)
-                        .placeholder(R.drawable.ic_alien_head)
-                        .override(1000, 1000)
-                        .error(R.drawable.ic_sad_green_alien_whatface)
-                        .dontAnimate();
-    }
+    private ImageDetails mImageDetails;
 
 
     class NasaImageViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView spaceImage;
-
+        private final ImageView mSpaceImage;
+        private final TextView mSpaceCardTitle;
+        private final TextView mSpaceCardDesc;
         public NasaImageViewHolder(View itemView) {
             super(itemView);
-            spaceImage = itemView.findViewById(R.id.spaceImage);
+            mSpaceImage = itemView.findViewById(R.id.spaceCardImage);
+            mSpaceCardTitle = itemView.findViewById(R.id.spaceCardTitle);
+            mSpaceCardDesc = itemView.findViewById(R.id.spaceCardDesc);
         }
     }
 
@@ -74,7 +44,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
 
     @Override
     public NasaImageAdaptor.NasaImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.nasa_image_details, parent, false);
+        View itemView = mInflater.inflate(R.layout.fragment_space_card, parent, false);
         return new NasaImageViewHolder(itemView);
     }
 
@@ -82,7 +52,9 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
     public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
 
         if(mImageDetails != null){
-            final ImageDetails current = mImageDetails.get(position);
+            final ImageDetails current = mImageDetails;
+            holder.mSpaceCardTitle.setText(current.getTitle());
+            holder.mSpaceCardDesc.setText(current.getDescription());
             Glide.with(mInflater.getContext())
                     .load(current.getUri())
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -90,22 +62,22 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
                     .placeholder(R.drawable.ic_alien_head)
                     .error(R.drawable.ic_sad_green_alien_whatface)
                     .dontAnimate()
-                    .into(holder.spaceImage);
+                    .into(holder.mSpaceImage);
         }
     }
 
     @Override
     public int getItemCount() {
         if(mImageDetails != null)
-            return mImageDetails.size();
+            return 1;
         return 0;
     }
 
-    public List<ImageDetails> getImageDetails() {
+    public ImageDetails getImageDetails() {
         return mImageDetails;
     }
 
-    public void setImageDetails(Stack<ImageDetails> imageDetails) {
+    public void setImageDetails(ImageDetails imageDetails) {
         mImageDetails = imageDetails;
         notifyDataSetChanged();
     }

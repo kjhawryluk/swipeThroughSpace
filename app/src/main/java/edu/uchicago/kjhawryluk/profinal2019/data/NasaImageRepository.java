@@ -43,6 +43,7 @@ public class NasaImageRepository {
     private final NasaImageRestService mNasaImageRestService;
     public static final CompositeDisposable compositeDisposable = new CompositeDisposable();
     public MutableLiveData<Stack<ImageDetails>> mQueriedImages;
+    private MutableLiveData<ImageDetails> mTopImageOfStack;
 
     private NasaImageRepository(Application application) {
         this.mNasaImageDatabase = NasaImageDatabase.getDatabase(application);
@@ -50,6 +51,8 @@ public class NasaImageRepository {
         this.mQueryDao = this.mNasaImageDatabase.mQueryDao();
         this.mNasaImageRestService = getNasaImageRestService();
         this.mQueriedImages = new MutableLiveData<>();
+        this.mTopImageOfStack = new MutableLiveData<>();
+
     }
 
     public static NasaImageRepository getInstance(Application application) {
@@ -101,6 +104,7 @@ public class NasaImageRepository {
                         } else {
                             // Update UI
                             mQueriedImages.setValue(prevPageImages);
+                            popImage();
                         }
 
                     }
@@ -110,6 +114,7 @@ public class NasaImageRepository {
                         Log.e("RESPONSE ERROR", e.getMessage());
                         // Update with partial results.
                         mQueriedImages.setValue(prevPageImages);
+                        popImage();
                     }
 
                 });
@@ -161,8 +166,10 @@ public class NasaImageRepository {
         protected void onPostExecute(Stack<ImageDetails> imageDetails) {
             super.onPostExecute(imageDetails);
             // Update the image list even before all the pages have been processed.
-            if (mQueriedImages != null && imageDetails != null)
+            if (mQueriedImages != null && imageDetails != null){
                 mQueriedImages.setValue(imageDetails);
+                popImage();
+            }
             new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
         }
 //TODO:: Add function for post processing.
@@ -183,6 +190,20 @@ public class NasaImageRepository {
 
     public MutableLiveData<Stack<ImageDetails>> getQueriedImages() {
         return mQueriedImages;
+    }
+
+    public MutableLiveData<ImageDetails> getTopImageOfStack() {
+        return mTopImageOfStack;
+    }
+
+    /**
+     * Set top image from queried images.
+     * @return
+     */
+    public void popImage(){
+        Stack<ImageDetails> queriedImages = mQueriedImages.getValue();
+        mTopImageOfStack.setValue(queriedImages.pop());
+        mQueriedImages.setValue(queriedImages);
     }
 
     /**
