@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 
@@ -23,8 +24,8 @@ public class NasaImageQueryResponse {
         this.collection = collection;
     }
 
-    public List<ImageDetails> getAllImageDetails() {
-        ArrayList<ImageDetails> imageDetailsList = new ArrayList<>();
+    public Stack<ImageDetails> getAllImageDetails() {
+        Stack<ImageDetails> imageDetailsList = new Stack<>();
         for (Item item : collection.getItems()) {
             List<ImageDetails> data = item.getData();
             if (data != null && data.size() > 0) {

@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
@@ -29,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mNasaImageViewModel = new NasaImageViewModel(this.getApplication());
         mSearchBar = findViewById(R.id.searchBar);
+        FrameLayout f = findViewById(R.id.fragContainer);
+
+        f.setOnTouchListener(new OnSwipeTouchListener(this));
+
     }
 
     @Override

@@ -21,7 +21,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
+import edu.uchicago.kjhawryluk.profinal2019.OnSwipeTouchListener;
 import edu.uchicago.kjhawryluk.profinal2019.R;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
@@ -29,7 +31,7 @@ import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.NasaImageViewHolder> implements ListPreloader.PreloadModelProvider<ImageDetails>{
     private final LayoutInflater mInflater;
     private final NasaImageViewModel mNasaImageViewModel;
-    private List<ImageDetails> mImageDetails;
+    private Stack<ImageDetails> mImageDetails;
 
     @Override
     @NonNull
@@ -78,6 +80,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
 
     @Override
     public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
+
         if(mImageDetails != null){
             final ImageDetails current = mImageDetails.get(position);
             Glide.with(mInflater.getContext())
@@ -102,7 +105,7 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
         return mImageDetails;
     }
 
-    public void setImageDetails(List<ImageDetails> imageDetails) {
+    public void setImageDetails(Stack<ImageDetails> imageDetails) {
         mImageDetails = imageDetails;
         notifyDataSetChanged();
     }

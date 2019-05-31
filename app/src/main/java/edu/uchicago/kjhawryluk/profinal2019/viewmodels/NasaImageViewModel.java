@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import java.util.List;
+import java.util.Stack;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.NasaImageRepository;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
@@ -17,7 +18,7 @@ public class NasaImageViewModel extends AndroidViewModel {
     private LiveData<List<ImageDetails>> mFavoriteImages;
     private LiveData<ImageQuery> mMostRecentQuery;
     private LiveData<List<ImageQuery>> mQueryHistory;
-    private MutableLiveData<List<ImageDetails>> mQueriedImages;
+    private MutableLiveData<Stack<ImageDetails>> mQueriedImages;
 
     public NasaImageViewModel(@NonNull Application application){
         super(application);
@@ -44,7 +45,7 @@ public class NasaImageViewModel extends AndroidViewModel {
         return mQueryHistory;
     }
 
-    public MutableLiveData<List<ImageDetails>> getQueriedImages() {
+    public MutableLiveData<Stack<ImageDetails>> getQueriedImages() {
         return mQueriedImages;
     }
 }

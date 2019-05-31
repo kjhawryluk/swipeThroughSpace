@@ -12,6 +12,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.local.NasaImageDatabase;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.dao.ImageDetailsDao;
@@ -41,7 +42,7 @@ public class NasaImageRepository {
     private NasaImageDatabase mNasaImageDatabase;
     private final NasaImageRestService mNasaImageRestService;
     public static final CompositeDisposable compositeDisposable = new CompositeDisposable();
-    public MutableLiveData<List<ImageDetails>> mQueriedImages;
+    public MutableLiveData<Stack<ImageDetails>> mQueriedImages;
 
     private NasaImageRepository(Application application) {
         this.mNasaImageDatabase = NasaImageDatabase.getDatabase(application);
@@ -74,12 +75,12 @@ public class NasaImageRepository {
     public void queryImages(final String query) {
         if (query == null || query.isEmpty())
             return;
-        List<ImageDetails> prevPageImages = new ArrayList<>();
+        Stack<ImageDetails> prevPageImages = new Stack<>();
         int pageNum = 1;
         queryImages(query, pageNum, prevPageImages);
     }
 
-    private void queryImages(final String query, final int pageNum, final List<ImageDetails> prevPageImages) {
+    private void queryImages(final String query, final int pageNum, final Stack<ImageDetails> prevPageImages) {
         mNasaImageRestService.searchImages(query, pageNum, MEDIA_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -91,7 +92,7 @@ public class NasaImageRepository {
 
                     @Override
                     public void onSuccess(NasaImageQueryResponse queryResponse) {
-                        List<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
+                        Stack<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
                         prevPageImages.addAll(imageDetailList);
 
                         int nextPageNum = queryResponse.getNextPageNum(pageNum);
@@ -131,7 +132,7 @@ public class NasaImageRepository {
         }
     }
 
-    private class FetchImageUrlsAsyncTask extends AsyncTask<ImageDetails, Void, List<ImageDetails>> {
+    private class FetchImageUrlsAsyncTask extends AsyncTask<ImageDetails, Void, Stack<ImageDetails>> {
 
         private  NasaImageRestService mNasaImageRestService;
         private String mQuery;
@@ -142,8 +143,8 @@ public class NasaImageRepository {
         }
 
         @Override
-        protected List<ImageDetails> doInBackground(final ImageDetails... params) {
-            List<ImageDetails> updatedDetails = new ArrayList<>();
+        protected Stack<ImageDetails> doInBackground(final ImageDetails... params) {
+            Stack<ImageDetails> updatedDetails = new Stack<>();
             for (ImageDetails imageDetails : params) {
                 String metaUri = imageDetails.getMetaUri();
                 if(metaUri != null){
@@ -157,7 +158,7 @@ public class NasaImageRepository {
         }
 
         @Override
-        protected void onPostExecute(List<ImageDetails> imageDetails) {
+        protected void onPostExecute(Stack<ImageDetails> imageDetails) {
             super.onPostExecute(imageDetails);
             // Update the image list even before all the pages have been processed.
             if (mQueriedImages != null && imageDetails != null)
@@ -180,7 +181,7 @@ public class NasaImageRepository {
         return mQueryDao.getMostRecentQuery();
     }
 
-    public MutableLiveData<List<ImageDetails>> getQueriedImages() {
+    public MutableLiveData<Stack<ImageDetails>> getQueriedImages() {
         return mQueriedImages;
     }
 

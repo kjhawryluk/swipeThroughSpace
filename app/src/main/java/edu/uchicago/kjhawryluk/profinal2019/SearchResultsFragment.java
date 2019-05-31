@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import com.bumptech.glide.util.FixedPreloadSizeProvider;
 import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.util.List;
+import java.util.Stack;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
@@ -65,12 +65,12 @@ public class SearchResultsFragment extends Fragment {
 
         // Bind Recycler to adaptor
         mSearchResultsRecyclerView.setAdapter(adaptor);
-        mSearchResultsRecyclerView.setLayoutManager(new GridLayoutManager(container.getContext(), 2));
+        mSearchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
 
         // Listen for updates
-        mNasaImageViewModel.getQueriedImages().observe(this, new Observer<List<ImageDetails>>() {
+        mNasaImageViewModel.getQueriedImages().observe(this, new Observer<Stack<ImageDetails>>() {
             @Override
-            public void onChanged(@Nullable List<ImageDetails> imageDetails) {
+            public void onChanged(@Nullable Stack<ImageDetails> imageDetails) {
                 adaptor.setImageDetails(imageDetails);
             }
         });
