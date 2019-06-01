@@ -5,21 +5,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SearchResultsFragment">
-<LinearLayout
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:layout_weight="75"
+    android:layout_weight="70"
     >
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/spaceImageRecyclerView"
+        android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:listitem="@layout/fragment_space_card_image" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+    <ImageView
+        android:id="@+id/like"
+        android:src="@drawable/ic_favorite_24dp"
+        android:visibility="gone"
+        android:textColor="@color/colorAccent"
+        android:layout_width="400dp"
+        android:layout_height="400dp"/>
+        <TextView
+            android:id="@+id/dislike"
+            android:text="@string/nope"
+            android:visibility="gone"
+            android:textSize="100sp"
+            android:textColor="@color/colorAccent"
+            android:rotation="310"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
+    </FrameLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="25"
+        android:layout_weight="30"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="16dp"

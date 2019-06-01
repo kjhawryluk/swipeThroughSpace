@@ -3,7 +3,9 @@ package edu.uchicago.kjhawryluk.profinal2019;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.media.Image;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
@@ -27,6 +31,9 @@ public class SearchResultsFragment extends Fragment {
     private NasaImageViewModel mNasaImageViewModel;
     private RecyclerView mSearchResultsRecyclerView;
     private RecyclerView mSpaceImageTextRecyclerView;
+    private ImageView mFavoriteIcon;
+    private TextView mDislikeTextView;
+
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -45,6 +52,8 @@ public class SearchResultsFragment extends Fragment {
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
         mSearchResultsRecyclerView = root.findViewById(R.id.spaceImageRecyclerView);
         mSpaceImageTextRecyclerView = root.findViewById(R.id.spaceImageTextRecyclerView);
+        mFavoriteIcon = root.findViewById(R.id.like);
+        mDislikeTextView = root.findViewById(R.id.dislike);
 
         final NasaImageAdaptor imageAdaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
         final NasaImageTextAdaptor textAdaptor = new NasaImageTextAdaptor(container.getContext());
@@ -60,7 +69,8 @@ public class SearchResultsFragment extends Fragment {
         mNasaImageViewModel.getTopImageOfStack().observe(this, new Observer<ImageDetails>() {
             @Override
             public void onChanged(@Nullable ImageDetails imageDetails) {
-
+                mFavoriteIcon.setVisibility(View.GONE);
+                mDislikeTextView.setVisibility(View.GONE);
                 imageAdaptor.setImageDetails(imageDetails);
                 textAdaptor.setImageDetails(imageDetails);
             }
@@ -68,17 +78,27 @@ public class SearchResultsFragment extends Fragment {
         mSearchResultsRecyclerView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()) {
                 @Override
                 public void onSwipeRight() {
-                    Toast.makeText(container.getContext(), "LIKE", Toast.LENGTH_SHORT);
-                    mNasaImageViewModel.popImage();
+                    swipeAction(mFavoriteIcon, true);
                 }
 
                 @Override
                 public void onSwipeLeft() {
-                    Toast.makeText(container.getContext(), "DISLIKE", Toast.LENGTH_SHORT);
-                    mNasaImageViewModel.popImage();
+                    swipeAction(mDislikeTextView, false);
                 }
             });
         return root;
+    }
+
+    private void swipeAction(View view, final boolean isFavorite) {
+        view.setVisibility(View.VISIBLE);
+        new CountDownTimer(150, 1000) {
+            public void onFinish() {
+                mNasaImageViewModel.popImage(isFavorite);
+            }
+            public void onTick(long millisUntilFinished) {
+
+            }
+        }.start();
     }
 
 }

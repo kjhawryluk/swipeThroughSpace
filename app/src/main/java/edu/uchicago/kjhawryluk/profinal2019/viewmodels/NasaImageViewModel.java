@@ -51,8 +51,8 @@ public class NasaImageViewModel extends AndroidViewModel {
         return mQueriedImages;
     }
 
-    public void popImage() {
-        mNasaImageRepository.popImage();
+    public void popImage(boolean isFavorite) {
+        mNasaImageRepository.popImage(isFavorite);
     }
 
     public MutableLiveData<ImageDetails> getTopImageOfStack() {

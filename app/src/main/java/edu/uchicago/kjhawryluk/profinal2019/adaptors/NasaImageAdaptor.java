@@ -52,7 +52,6 @@ public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.Nasa
                     .load(current.getUri())
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .override(1000, 1000)
-                    .placeholder(R.drawable.ic_alien_head)
                     .error(R.drawable.ic_sad_green_alien_whatface)
                     .dontAnimate()
                     .into(holder.mSpaceImage);

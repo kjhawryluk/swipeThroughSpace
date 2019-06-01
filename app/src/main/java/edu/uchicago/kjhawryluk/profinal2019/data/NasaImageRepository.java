@@ -106,7 +106,7 @@ public class NasaImageRepository {
                             // Update UI
                             mQueriedImages.setValue(prevPageImages);
                             Log.i("API CALL", "Image Popped");
-                            popImage();
+                            loadNextImage();
                             prevPageImages.empty();
                         }
 
@@ -147,42 +147,20 @@ public class NasaImageRepository {
         }
     }
 
-    private class FetchImageUrlsAsyncTask extends AsyncTask<ImageDetails, Void, Stack<ImageDetails>> {
+    private static class SaveFavoriteAsyncTask extends AsyncTask<ImageDetails, Void, Void> {
 
-        private  NasaImageRestService mNasaImageRestService;
-        private String mQuery;
+        private ImageDetailsDao mFavoriteDao;
 
-        FetchImageUrlsAsyncTask( NasaImageRestService nasaImageRestService, String query) {
-            mNasaImageRestService = nasaImageRestService;
-            mQuery = query;
+        SaveFavoriteAsyncTask(ImageDetailsDao dao) {
+            mFavoriteDao = dao;
         }
 
         @Override
-        protected Stack<ImageDetails> doInBackground(final ImageDetails... params) {
-            Stack<ImageDetails> updatedDetails = new Stack<>();
-            for (ImageDetails imageDetails : params) {
-                String metaUri = imageDetails.getMetaUri();
-                if(metaUri != null){
-                    List<String> uris = mNasaImageRestService.getLinks(metaUri).blockingGet();
-                    imageDetails.setImageUris(uris);
-                    imageDetails.setImageUriToShow();
-                    updatedDetails.add(imageDetails);
-                }
-            }
-          return updatedDetails;
+        protected Void doInBackground(final ImageDetails... params) {
+            ImageDetails imageDetails =  params[0];
+            mFavoriteDao.saveFavoriteImage(imageDetails);
+            return null;
         }
-
-        @Override
-        protected void onPostExecute(Stack<ImageDetails> imageDetails) {
-            super.onPostExecute(imageDetails);
-            // Update the image list even before all the pages have been processed.
-            if (mQueriedImages != null && imageDetails != null){
-                mQueriedImages.setValue(imageDetails);
-                popImage();
-            }
-            new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
-        }
-//TODO:: Add function for post processing.
     }
 
 
@@ -210,7 +188,16 @@ public class NasaImageRepository {
      * Set top image from queried images.
      * @return
      */
-    public void popImage(){
+    public void popImage(boolean isFavorite){
+        if(isFavorite){
+            new SaveFavoriteAsyncTask(mImageDetailsDao).execute(mTopImageOfStack.getValue());
+        } else {
+            Log.i("MESSAGE","DISLIKE");
+        }
+        loadNextImage();
+    }
+
+    private void loadNextImage(){
         Stack<ImageDetails> queriedImages = mQueriedImages.getValue();
         mTopImageOfStack.setValue(queriedImages.pop());
         mQueriedImages.setValue(queriedImages);
