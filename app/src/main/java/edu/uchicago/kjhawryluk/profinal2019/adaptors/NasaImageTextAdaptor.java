@@ -5,57 +5,46 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import edu.uchicago.kjhawryluk.profinal2019.R;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
-public class NasaImageAdaptor extends RecyclerView.Adapter<NasaImageAdaptor.NasaImageViewHolder> {
+public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdaptor.NasaImageViewHolder> {
     private final LayoutInflater mInflater;
-    private final NasaImageViewModel mNasaImageViewModel;
     private ImageDetails mImageDetails;
 
 
     class NasaImageViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView mSpaceImage;
+        private final TextView mSpaceCardTitle;
+        private final TextView mSpaceCardDesc;
         public NasaImageViewHolder(View itemView) {
             super(itemView);
 
-            mSpaceImage = itemView.findViewById(R.id.spaceCardImage);
-          }
+            mSpaceCardTitle = itemView.findViewById(R.id.spaceCardTitle);
+            mSpaceCardDesc = itemView.findViewById(R.id.spaceCardDesc);
+        }
     }
 
 
-    public NasaImageAdaptor(Context context, NasaImageViewModel nasaImageViewModel) {
+    public NasaImageTextAdaptor(Context context) {
         mInflater = LayoutInflater.from(context);
-        mNasaImageViewModel = nasaImageViewModel;
     }
 
     @Override
-    public NasaImageAdaptor.NasaImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.fragment_space_card_image, parent, false);
+    public NasaImageTextAdaptor.NasaImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = mInflater.inflate(R.layout.fragment_space_card_text, parent, false);
         return new NasaImageViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(NasaImageAdaptor.NasaImageViewHolder holder, int position) {
+    public void onBindViewHolder(NasaImageTextAdaptor.NasaImageViewHolder holder, int position) {
 
         if(mImageDetails != null){
             final ImageDetails current = mImageDetails;
-            Glide.with(mInflater.getContext())
-                    .load(current.getUri())
-                    .diskCacheStrategy(DiskCacheStrategy.DATA)
-                    .override(1000, 1000)
-                    .placeholder(R.drawable.ic_alien_head)
-                    .error(R.drawable.ic_sad_green_alien_whatface)
-                    .dontAnimate()
-                    .into(holder.mSpaceImage);
+            holder.mSpaceCardTitle.setText(current.getTitle());
+            holder.mSpaceCardDesc.setText(current.getDescription());
         }
     }
 

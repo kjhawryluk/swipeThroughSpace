@@ -11,18 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.ListPreloader;
-import com.bumptech.glide.ListPreloader.*;
-import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
-import com.bumptech.glide.util.FixedPreloadSizeProvider;
-import com.bumptech.glide.util.ViewPreloadSizeProvider;
-
-import java.util.List;
-import java.util.Stack;
+import android.widget.Toast;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
+import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageTextAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
@@ -34,6 +26,7 @@ public class SearchResultsFragment extends Fragment {
 
     private NasaImageViewModel mNasaImageViewModel;
     private RecyclerView mSearchResultsRecyclerView;
+    private RecyclerView mSpaceImageTextRecyclerView;
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -50,24 +43,41 @@ public class SearchResultsFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_search_results, container, false);
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
-        mSearchResultsRecyclerView = root.findViewById(R.id.searchResultsRecyclerView);
+        mSearchResultsRecyclerView = root.findViewById(R.id.spaceImageRecyclerView);
+        mSpaceImageTextRecyclerView = root.findViewById(R.id.spaceImageTextRecyclerView);
 
-        final NasaImageAdaptor adaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
+        final NasaImageAdaptor imageAdaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
+        final NasaImageTextAdaptor textAdaptor = new NasaImageTextAdaptor(container.getContext());
         // Initialize adaptor
 
         // Bind Recycler to adaptor
-        mSearchResultsRecyclerView.setAdapter(adaptor);
+        mSearchResultsRecyclerView.setAdapter(imageAdaptor);
         mSearchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        mSpaceImageTextRecyclerView.setAdapter(textAdaptor);
+        mSpaceImageTextRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
 
         // Listen for updates
         mNasaImageViewModel.getTopImageOfStack().observe(this, new Observer<ImageDetails>() {
             @Override
             public void onChanged(@Nullable ImageDetails imageDetails) {
 
-                adaptor.setImageDetails(imageDetails);
+                imageAdaptor.setImageDetails(imageDetails);
+                textAdaptor.setImageDetails(imageDetails);
             }
         });
-        mSearchResultsRecyclerView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()));
+        mSearchResultsRecyclerView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()) {
+                @Override
+                public void onSwipeRight() {
+                    Toast.makeText(container.getContext(), "LIKE", Toast.LENGTH_SHORT);
+                    mNasaImageViewModel.popImage();
+                }
+
+                @Override
+                public void onSwipeLeft() {
+                    Toast.makeText(container.getContext(), "DISLIKE", Toast.LENGTH_SHORT);
+                    mNasaImageViewModel.popImage();
+                }
+            });
         return root;
     }
 

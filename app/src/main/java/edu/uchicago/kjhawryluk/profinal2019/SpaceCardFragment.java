@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import edu.uchicago.kjhawryluk.profinal2019.data.NasaImageRepository;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
@@ -35,11 +34,10 @@ public class SpaceCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_space_card, container, false);
+        View root = inflater.inflate(R.layout.fragment_space_card_image, container, false);
         mSpaceCardImage = root.findViewById(R.id.spaceCardImage);
         mSpaceCardTitle = root.findViewById(R.id.spaceCardTitle);
         mSpaceCardDesc = root.findViewById(R.id.spaceCardDesc);
-        mSpaceCardImage.setOnTouchListener(new OnSwipeTouchListener(inflater.getContext()));
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
         return root;
     }

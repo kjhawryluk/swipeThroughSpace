@@ -2,6 +2,7 @@ package edu.uchicago.kjhawryluk.profinal2019;
 
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -10,15 +11,17 @@ import android.view.View;
 //https://stackoverflow.com/questions/4139288/android-how-to-handle-right-to-left-swipe-gestures
 public class OnSwipeTouchListener implements View.OnTouchListener {
 
-    private final GestureDetector gestureDetector;
+    private final GestureDetectorCompat gestureDetector;
 
     public OnSwipeTouchListener (Context ctx){
-        gestureDetector = new GestureDetector(ctx, new GestureListener());
+        gestureDetector = new GestureDetectorCompat(ctx, new GestureListener());
+        gestureDetector.setIsLongpressEnabled(false);
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
+        return true;
     }
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -26,13 +29,19 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
+
+
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
         }
 
+
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if(e1 == null)
+                return false;
+
             boolean result = false;
             try {
                 float diffY = e2.getY() - e1.getY();
@@ -55,7 +64,7 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
                     }
                     result = true;
                 }
-            } catch (Exception exception) {
+           } catch (Exception exception) {
                 exception.printStackTrace();
             }
             return result;

@@ -78,12 +78,14 @@ public class NasaImageRepository {
     public void queryImages(final String query) {
         if (query == null || query.isEmpty())
             return;
+        mQueriedImages.setValue(new Stack<ImageDetails>());
         Stack<ImageDetails> prevPageImages = new Stack<>();
         int pageNum = 1;
         queryImages(query, pageNum, prevPageImages);
     }
 
     private void queryImages(final String query, final int pageNum, final Stack<ImageDetails> prevPageImages) {
+
         mNasaImageRestService.searchImages(query, pageNum, MEDIA_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -99,12 +101,23 @@ public class NasaImageRepository {
                         prevPageImages.addAll(imageDetailList);
 
                         int nextPageNum = queryResponse.getNextPageNum(pageNum);
-                        if (nextPageNum > -1) {
-                            queryImages(query, nextPageNum, prevPageImages);
-                        } else {
+                        // Set the list and pop the first image upon the first results
+                        if (pageNum == 1) {
                             // Update UI
                             mQueriedImages.setValue(prevPageImages);
+                            Log.i("API CALL", "Image Popped");
                             popImage();
+                            prevPageImages.empty();
+                        }
+
+                        // Get the rest of the images and set update the stack at the end
+                        // don't pop from it though because that already happened.
+                        if (nextPageNum > -1) {
+                            queryImages(query, nextPageNum, prevPageImages);
+                        } else{
+                            // Update UI
+                            prevPageImages.addAll(mQueriedImages.getValue());
+                            mQueriedImages.setValue(prevPageImages);
                         }
 
                     }
@@ -112,9 +125,6 @@ public class NasaImageRepository {
                     @Override
                     public void onError(Throwable e) {
                         Log.e("RESPONSE ERROR", e.getMessage());
-                        // Update with partial results.
-                        mQueriedImages.setValue(prevPageImages);
-                        popImage();
                     }
 
                 });

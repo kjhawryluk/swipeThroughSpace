@@ -30,11 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mNasaImageViewModel = new NasaImageViewModel(this.getApplication());
         mSearchBar = findViewById(R.id.searchBar);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -43,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
             SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
             swapInFragment(searchResultsFragment);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
