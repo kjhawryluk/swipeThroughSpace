@@ -19,7 +19,7 @@ import edu.uchicago.kjhawryluk.profinal2019.data.typeconverters.ListConverter;
 import static edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants.DEFAULT_SIZE;
 import static edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants.IMAGE_BASE_URI;
 
-@Entity(tableName = "FavoriteImages")
+@Entity(tableName = "SwipedImages")
 public class ImageDetails {
 
     @SerializedName("center")
@@ -62,6 +62,8 @@ public class ImageDetails {
     private List<String> imageUris;
 
     private String metaUri;
+
+    private boolean isFavorite;
 
     @Ignore
     private Uri uriToShow;
@@ -191,5 +193,13 @@ public class ImageDetails {
 
     public void setMetaUri(String metaUri) {
         this.metaUri = metaUri;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

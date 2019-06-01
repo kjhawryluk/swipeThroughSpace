@@ -12,6 +12,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Stack;
 
 import edu.uchicago.kjhawryluk.profinal2019.data.local.NasaImageDatabase;
@@ -44,6 +45,7 @@ public class NasaImageRepository {
     public static final CompositeDisposable compositeDisposable = new CompositeDisposable();
     public MutableLiveData<Stack<ImageDetails>> mQueriedImages;
     private MutableLiveData<ImageDetails> mTopImageOfStack;
+    private LiveData<List<String>> mSwipedImages;
 
     private NasaImageRepository(Application application) {
         this.mNasaImageDatabase = NasaImageDatabase.getDatabase(application);
@@ -52,7 +54,7 @@ public class NasaImageRepository {
         this.mNasaImageRestService = getNasaImageRestService();
         this.mQueriedImages = new MutableLiveData<>();
         this.mTopImageOfStack = new MutableLiveData<>();
-
+        this.mSwipedImages = loadSwipedImageIds();
     }
 
     public static NasaImageRepository getInstance(Application application) {
@@ -98,7 +100,9 @@ public class NasaImageRepository {
                     @Override
                     public void onSuccess(NasaImageQueryResponse queryResponse) {
                         Stack<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
-                        prevPageImages.addAll(imageDetailList);
+
+                        // Add only the images that haven't been swiped.
+                        prevPageImages.addAll(filterSwipedImages(imageDetailList));
 
                         int nextPageNum = queryResponse.getNextPageNum(pageNum);
                         // Set the list and pop the first image upon the first results
@@ -128,6 +132,21 @@ public class NasaImageRepository {
                     }
 
                 });
+    }
+
+    private Stack<ImageDetails> filterSwipedImages(Stack<ImageDetails> pulledImages){
+        List<String> swipedImages = mSwipedImages.getValue();
+
+        //First query so nothing to filter.
+        if(swipedImages == null)
+            return pulledImages;
+
+        Stack<ImageDetails> newImages = new Stack<>();
+        for (ImageDetails pulledImage : pulledImages) {
+            if(!swipedImages.contains(pulledImage.getNasaId()))
+                newImages.add(pulledImage);
+        }
+        return newImages;
     }
 
     private static class SaveQueryAsyncTask extends AsyncTask<String, Void, Void> {
@@ -168,6 +187,10 @@ public class NasaImageRepository {
         return mImageDetailsDao.loadFavoriteImages();
     }
 
+    public LiveData<List<String>> loadSwipedImageIds() {
+        return mImageDetailsDao.loadSwipedImageIds();
+    }
+
     public LiveData<List<ImageQuery>> loadQueryHistory() {
         return mQueryDao.loadQueryHistory();
     }
@@ -189,12 +212,18 @@ public class NasaImageRepository {
      * @return
      */
     public void popImage(boolean isFavorite){
-        if(isFavorite){
-            new SaveFavoriteAsyncTask(mImageDetailsDao).execute(mTopImageOfStack.getValue());
-        } else {
-            Log.i("MESSAGE","DISLIKE");
-        }
+        saveImageDetails(isFavorite);
         loadNextImage();
+    }
+
+    private void saveImageDetails(boolean isFavorite) {
+        ImageDetails imageToSave = mTopImageOfStack.getValue();
+        if(isFavorite){
+            imageToSave.setFavorite(true);
+        } else {
+            imageToSave.setFavorite(false);
+        }
+        new SaveFavoriteAsyncTask(mImageDetailsDao).execute(imageToSave);
     }
 
     private void loadNextImage(){

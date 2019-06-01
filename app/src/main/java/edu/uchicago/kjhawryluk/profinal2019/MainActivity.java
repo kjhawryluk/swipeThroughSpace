@@ -34,11 +34,17 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            mNasaImageViewModel.queryNasaImages(query);
-            SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-            swapInFragment(searchResultsFragment);
+            // If there's an actual query, process it.
+            if(query != null && !query.isEmpty()) {
+                mNasaImageViewModel.queryNasaImages(query);
+                SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+                swapInFragment(searchResultsFragment);
+                getIntent().removeExtra(SearchManager.QUERY);
+            }
         }
     }
+
+
 
     @Override
     protected void onStart() {
