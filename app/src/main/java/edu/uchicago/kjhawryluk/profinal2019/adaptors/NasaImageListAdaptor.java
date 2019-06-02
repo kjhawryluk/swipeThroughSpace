@@ -2,7 +2,9 @@ package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,7 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
         private final TextView mSpaceTitle;
         private ImageButton mFavoriteButton;
         private ImageButton mRemoveButton;
+        private CardView mCardView;
 
         public NasaImageViewHolder(View itemView) {
             super(itemView);
@@ -39,6 +42,7 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
             mSpaceTitle = itemView.findViewById(R.id.swipedImagesList);
             mFavoriteButton = itemView.findViewById(R.id.favorite);
             mRemoveButton = itemView.findViewById(R.id.remove);
+            mCardView = itemView.findViewById(R.id.card_view);
         }
     }
 
@@ -68,6 +72,9 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
                     .error(R.drawable.ic_sad_green_alien_whatface)
                     .dontAnimate()
                     .into(holder.mSpaceImage);
+
+            holder.mCardView.setOnClickListener(new ShowSelectedImageListener(current));
+
             // Show the correct image
             if (mShowFavorites) {
                 holder.mFavoriteButton.setVisibility(View.VISIBLE);
@@ -81,17 +88,34 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
         }
     }
 
+    class ShowSelectedImageListener implements View.OnClickListener{
+        ImageDetails mImageDetails;
+
+        public ShowSelectedImageListener(ImageDetails imageDetails) {
+            mImageDetails = imageDetails;
+        }
+
+        @Override
+        public void onClick(View v) {
+           // mNasaImageViewModel.pushImage(mImageDetails);
+            SwipeThroughSwipedImages ctx =  (SwipeThroughSwipedImages) mInflater.getContext();
+            ctx.swipeThroughSwipedImages(mImageDetails);
+        }
+    }
+
     class UpdateSavedSwipedImage implements View.OnClickListener {
+        ImageDetails mImageDetails;
+        NasaImageViewHolder mNasaImageViewHolder;
+
         public UpdateSavedSwipedImage(ImageDetails imageDetails, NasaImageViewHolder viewHolder) {
             mImageDetails = imageDetails;
             mNasaImageViewHolder = viewHolder;
         }
 
-        ImageDetails mImageDetails;
-        NasaImageViewHolder mNasaImageViewHolder;
         @Override
         public void onClick(View v) {
             boolean newStatus = !mShowFavorites;
+            // Show the new icon
             if(newStatus){
                 mNasaImageViewHolder.mFavoriteButton.setVisibility(View.VISIBLE);
                 mNasaImageViewHolder.mRemoveButton.setVisibility(View.GONE);
@@ -99,6 +123,8 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
                 mNasaImageViewHolder.mFavoriteButton.setVisibility(View.GONE);
                 mNasaImageViewHolder.mRemoveButton.setVisibility(View.VISIBLE);
             }
+
+            // Wait for a moment and then save the new status
             new CountDownTimer(150, 1000) {
                 public void onFinish() {
                     mNasaImageViewModel.saveImageDetails(newStatus, mImageDetails);
@@ -126,4 +152,7 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
         notifyDataSetChanged();
     }
 
+    public interface SwipeThroughSwipedImages{
+        void swipeThroughSwipedImages(ImageDetails imageDetails);
+    }
 }

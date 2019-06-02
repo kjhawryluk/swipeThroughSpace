@@ -79,5 +79,4 @@ public class SwipedImagesListFragment extends Fragment {
             mSwipedImagesListTitle.setText("Disliked Pictures");
         }
     }
-
 }

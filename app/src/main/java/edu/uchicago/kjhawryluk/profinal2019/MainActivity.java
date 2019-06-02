@@ -1,8 +1,10 @@
 package edu.uchicago.kjhawryluk.profinal2019;
 
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,14 +16,23 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
+import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageListAdaptor;
+import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NasaImageListAdaptor.SwipeThroughSwipedImages {
 
     SearchView mSearchBar;
     NasaImageViewModel mNasaImageViewModel;
@@ -97,5 +108,24 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void swipeThroughSwipedImages(ImageDetails imageDetails){
+        Dialog settingsDialog = new Dialog(this);
+        settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout spaceImageLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_space_card_image
+                , null);
+        ImageView spaceCardImage = spaceImageLayout.findViewById(R.id.spaceCardImageDialog);
+
+        Glide.with(this)
+                .load(imageDetails.getUri())
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .override(1000, 1000)
+                .error(R.drawable.ic_sad_green_alien_whatface)
+                .dontAnimate()
+                .into(spaceCardImage);
+        settingsDialog.setContentView(spaceImageLayout);
+
+        settingsDialog.show();
     }
 }

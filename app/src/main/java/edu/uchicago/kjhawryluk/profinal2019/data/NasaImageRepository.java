@@ -109,7 +109,6 @@ public class NasaImageRepository {
                         if (pageNum == 1) {
                             // Update UI
                             mQueriedImages.setValue(prevPageImages);
-                            Log.i("API CALL", "Image Popped");
                             loadNextImage();
                             prevPageImages.empty();
                         }
@@ -126,6 +125,7 @@ public class NasaImageRepository {
                             // Update UI
                             prevPageImages.addAll(mQueriedImages.getValue());
                             mQueriedImages.setValue(prevPageImages);
+                            new SaveQueryAsyncTask(mQueryDao).execute(query);
                         }
 
                     }
@@ -225,7 +225,6 @@ public class NasaImageRepository {
         loadNextImage();
     }
 
-
     private void saveImageDetails(boolean isFavorite) {
         ImageDetails imageToSave = mTopImageOfStack.getValue();
         saveImageDetails(isFavorite, imageToSave);
@@ -253,7 +252,6 @@ public class NasaImageRepository {
 
     /**
      * https://developer.android.com/training/monitoring-device-state/connectivity-monitoring
-     *
      * @return
      */
     public boolean isInternetAvailable(Application application) {
