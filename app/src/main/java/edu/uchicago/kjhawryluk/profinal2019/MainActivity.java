@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
                 swapInFragment(searchResultsFragment);
                 getIntent().removeExtra(SearchManager.QUERY);
             }
+        } else{
+            WelcomeFragment welcomeFragment = new WelcomeFragment();
+            swapInFragment(welcomeFragment);
         }
     }
 
