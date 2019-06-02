@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
-        android:textSize="24sp"
+        android:textSize="16sp"
         tools:listitem="@layout/fragment_swiped_images_list"
         />
     <ImageButton
