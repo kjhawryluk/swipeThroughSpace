@@ -191,6 +191,10 @@ public class NasaImageRepository {
         return mImageDetailsDao.loadFavoriteImages();
     }
 
+    public LiveData<List<ImageDetails>> loadDislikedImages() {
+        return mImageDetailsDao.loadDislikedImages();
+    }
+
     public LiveData<List<String>> loadSwipedImageIds() {
         return mImageDetailsDao.loadSwipedImageIds();
     }

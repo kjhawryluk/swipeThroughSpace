@@ -6,4 +6,14 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Search NASA images" />
+    <item
+        android:id="@+id/showFavorites"
+        android:orderInCategory="100"
+        android:title="Show Favorites"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/showDisliked"
+        android:orderInCategory="200"
+        android:title="Show Disliked Images"
+        app:showAsAction="never" />
 </menu>

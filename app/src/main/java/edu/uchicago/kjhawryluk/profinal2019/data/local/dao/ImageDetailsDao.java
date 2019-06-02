@@ -15,9 +15,11 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 
 @Dao
 public interface ImageDetailsDao {
-    @Query("SELECT * FROM SwipedImages ORDER BY title")
+    @Query("SELECT * FROM SwipedImages WHERE isFavorite = 1 ORDER BY title")
     LiveData<List<ImageDetails>> loadFavoriteImages();
 
+    @Query("SELECT * FROM SwipedImages WHERE isFavorite = 0 ORDER BY title")
+    LiveData<List<ImageDetails>> loadDislikedImages();
     @Query("SELECT nasaId FROM SwipedImages")
     LiveData<List<String>> loadSwipedImageIds();
 
