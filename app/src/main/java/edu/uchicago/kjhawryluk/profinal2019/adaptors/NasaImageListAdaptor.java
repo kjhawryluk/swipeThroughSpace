@@ -1,10 +1,12 @@
 package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,24 +21,31 @@ import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
 public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdaptor.NasaImageViewHolder> {
     private final LayoutInflater mInflater;
-    private final NasaImageViewModel mNasaImageViewModel;
+    private NasaImageViewModel mNasaImageViewModel;
+    private boolean mShowFavorites;
     private List<ImageDetails> mImageDetails;
 
 
     class NasaImageViewHolder extends RecyclerView.ViewHolder {
         private final ImageView mSpaceImage;
         private final TextView mSpaceTitle;
+        private ImageButton mFavoriteButton;
+        private ImageButton mRemoveButton;
+
         public NasaImageViewHolder(View itemView) {
             super(itemView);
 
             mSpaceImage = itemView.findViewById(R.id.spaceImageThumb);
             mSpaceTitle = itemView.findViewById(R.id.swipedImagesList);
-          }
+            mFavoriteButton = itemView.findViewById(R.id.favorite);
+            mRemoveButton = itemView.findViewById(R.id.remove);
+        }
     }
 
 
-    public NasaImageListAdaptor(Context context, NasaImageViewModel nasaImageViewModel) {
+    public NasaImageListAdaptor(Context context, NasaImageViewModel nasaImageViewModel, boolean showFavorites) {
         mInflater = LayoutInflater.from(context);
+        mShowFavorites = showFavorites;
         mNasaImageViewModel = nasaImageViewModel;
     }
 
@@ -49,7 +58,7 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
     @Override
     public void onBindViewHolder(NasaImageListAdaptor.NasaImageViewHolder holder, int position) {
 
-        if(mImageDetails != null){
+        if (mImageDetails != null) {
             final ImageDetails current = mImageDetails.get(position);
             holder.mSpaceTitle.setText(current.getTitle());
             Glide.with(mInflater.getContext())
@@ -59,12 +68,51 @@ public class NasaImageListAdaptor extends RecyclerView.Adapter<NasaImageListAdap
                     .error(R.drawable.ic_sad_green_alien_whatface)
                     .dontAnimate()
                     .into(holder.mSpaceImage);
+            // Show the correct image
+            if (mShowFavorites) {
+                holder.mFavoriteButton.setVisibility(View.VISIBLE);
+                holder.mRemoveButton.setVisibility(View.GONE);
+                holder.mFavoriteButton.setOnClickListener(new UpdateSavedSwipedImage(current, holder));
+            } else {
+                holder.mFavoriteButton.setVisibility(View.GONE);
+                holder.mRemoveButton.setVisibility(View.VISIBLE);
+                holder.mRemoveButton.setOnClickListener(new UpdateSavedSwipedImage(current, holder));
+            }
+        }
+    }
+
+    class UpdateSavedSwipedImage implements View.OnClickListener {
+        public UpdateSavedSwipedImage(ImageDetails imageDetails, NasaImageViewHolder viewHolder) {
+            mImageDetails = imageDetails;
+            mNasaImageViewHolder = viewHolder;
+        }
+
+        ImageDetails mImageDetails;
+        NasaImageViewHolder mNasaImageViewHolder;
+        @Override
+        public void onClick(View v) {
+            boolean newStatus = !mShowFavorites;
+            if(newStatus){
+                mNasaImageViewHolder.mFavoriteButton.setVisibility(View.VISIBLE);
+                mNasaImageViewHolder.mRemoveButton.setVisibility(View.GONE);
+            } else {
+                mNasaImageViewHolder.mFavoriteButton.setVisibility(View.GONE);
+                mNasaImageViewHolder.mRemoveButton.setVisibility(View.VISIBLE);
+            }
+            new CountDownTimer(150, 1000) {
+                public void onFinish() {
+                    mNasaImageViewModel.saveImageDetails(newStatus, mImageDetails);
+                }
+                public void onTick(long millisUntilFinished) {
+
+                }
+            }.start();
         }
     }
 
     @Override
     public int getItemCount() {
-        if(mImageDetails != null)
+        if (mImageDetails != null)
             return mImageDetails.size();
         return 0;
     }

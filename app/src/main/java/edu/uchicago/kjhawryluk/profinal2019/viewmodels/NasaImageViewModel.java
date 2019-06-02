@@ -67,6 +67,10 @@ public class NasaImageViewModel extends AndroidViewModel {
         mNasaImageRepository.popImage(isFavorite);
     }
 
+    public void  saveImageDetails(boolean isFavorite, ImageDetails imageToSave) {
+        mNasaImageRepository.saveImageDetails(isFavorite, imageToSave);
+    }
+
     public MutableLiveData<ImageDetails> getTopImageOfStack() {
         return mTopImageOfStack;
     }

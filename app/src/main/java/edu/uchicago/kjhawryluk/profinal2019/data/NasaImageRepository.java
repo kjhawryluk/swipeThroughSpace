@@ -225,8 +225,13 @@ public class NasaImageRepository {
         loadNextImage();
     }
 
+
     private void saveImageDetails(boolean isFavorite) {
         ImageDetails imageToSave = mTopImageOfStack.getValue();
+        saveImageDetails(isFavorite, imageToSave);
+    }
+
+    public void saveImageDetails(boolean isFavorite, ImageDetails imageToSave) {
         if (isFavorite) {
             imageToSave.setFavorite(true);
         } else {

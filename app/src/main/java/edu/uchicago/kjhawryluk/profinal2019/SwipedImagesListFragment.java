@@ -59,7 +59,7 @@ public class SwipedImagesListFragment extends Fragment {
         mNasaImageViewModel = ViewModelProviders.of(this).get(NasaImageViewModel.class);
         addListTitle(root);
 
-        final NasaImageListAdaptor listAdaptor = new NasaImageListAdaptor(container.getContext(), mNasaImageViewModel);
+        final NasaImageListAdaptor listAdaptor = new NasaImageListAdaptor(container.getContext(), mNasaImageViewModel, mShowFavorites);
         mSwipedImagesRecyclerView.setAdapter(listAdaptor);
         mSwipedImagesRecyclerView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         mNasaImageViewModel.getSwipedImages(mShowFavorites).observe(this, new Observer<List<ImageDetails>>() {
