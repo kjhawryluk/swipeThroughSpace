@@ -34,10 +34,30 @@
             android:text="@string/nope"
             android:visibility="gone"
             android:textSize="100sp"
-            android:textColor="@color/colorAccent"
+            android:textColor="#66ce63"
             android:rotation="310"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/noResults"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+            android:src="@drawable/ic_sad_green_alien_whatface"
+            android:textColor="@color/colorAccent"
+            android:layout_width="390dp"
+            android:layout_height="390dp"/>
+        <TextView
+            android:id="@+id/noResultsText"
+            android:text="Do you even know space?!"
+            android:textSize="24sp"
+            android:textColor="#66ce63"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
     </LinearLayout>
     </FrameLayout>
     <LinearLayout

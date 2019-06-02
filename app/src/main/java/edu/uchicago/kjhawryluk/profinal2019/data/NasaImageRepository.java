@@ -114,11 +114,15 @@ public class NasaImageRepository {
                             prevPageImages.empty();
                         }
 
+                        // Exit if no images to return.
+                        if(prevPageImages.empty())
+                            return;
+
                         // Get the rest of the images and set update the stack at the end
                         // don't pop from it though because that already happened.
                         if (nextPageNum > -1) {
                             queryImages(query, nextPageNum, prevPageImages);
-                        } else{
+                        } else {
                             // Update UI
                             prevPageImages.addAll(mQueriedImages.getValue());
                             mQueriedImages.setValue(prevPageImages);
@@ -134,16 +138,16 @@ public class NasaImageRepository {
                 });
     }
 
-    private Stack<ImageDetails> filterSwipedImages(Stack<ImageDetails> pulledImages){
+    private Stack<ImageDetails> filterSwipedImages(Stack<ImageDetails> pulledImages) {
         List<String> swipedImages = mSwipedImages.getValue();
 
         //First query so nothing to filter.
-        if(swipedImages == null)
+        if (swipedImages == null)
             return pulledImages;
 
         Stack<ImageDetails> newImages = new Stack<>();
         for (ImageDetails pulledImage : pulledImages) {
-            if(!swipedImages.contains(pulledImage.getNasaId()))
+            if (!swipedImages.contains(pulledImage.getNasaId()))
                 newImages.add(pulledImage);
         }
         return newImages;
@@ -176,7 +180,7 @@ public class NasaImageRepository {
 
         @Override
         protected Void doInBackground(final ImageDetails... params) {
-            ImageDetails imageDetails =  params[0];
+            ImageDetails imageDetails = params[0];
             mFavoriteDao.saveFavoriteImage(imageDetails);
             return null;
         }
@@ -209,16 +213,17 @@ public class NasaImageRepository {
 
     /**
      * Set top image from queried images.
+     *
      * @return
      */
-    public void popImage(boolean isFavorite){
+    public void popImage(boolean isFavorite) {
         saveImageDetails(isFavorite);
         loadNextImage();
     }
 
     private void saveImageDetails(boolean isFavorite) {
         ImageDetails imageToSave = mTopImageOfStack.getValue();
-        if(isFavorite){
+        if (isFavorite) {
             imageToSave.setFavorite(true);
         } else {
             imageToSave.setFavorite(false);
@@ -226,10 +231,15 @@ public class NasaImageRepository {
         new SaveFavoriteAsyncTask(mImageDetailsDao).execute(imageToSave);
     }
 
-    private void loadNextImage(){
+    private void loadNextImage() {
         Stack<ImageDetails> queriedImages = mQueriedImages.getValue();
-        mTopImageOfStack.setValue(queriedImages.pop());
-        mQueriedImages.setValue(queriedImages);
+        if (!queriedImages.empty()) {
+            mTopImageOfStack.setValue(queriedImages.pop());
+            mQueriedImages.setValue(queriedImages);
+        } else {
+            mTopImageOfStack.setValue(null);
+            mQueriedImages.setValue(new Stack<>());
+        }
     }
 
     /**

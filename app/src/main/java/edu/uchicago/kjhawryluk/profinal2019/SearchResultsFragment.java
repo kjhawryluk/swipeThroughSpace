@@ -3,7 +3,6 @@ package edu.uchicago.kjhawryluk.profinal2019;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -14,8 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageTextAdaptor;
@@ -32,8 +31,8 @@ public class SearchResultsFragment extends Fragment {
     private RecyclerView mSearchResultsRecyclerView;
     private RecyclerView mSpaceImageTextRecyclerView;
     private ImageView mFavoriteIcon;
+    private LinearLayout mNoResults;
     private TextView mDislikeTextView;
-
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -54,6 +53,7 @@ public class SearchResultsFragment extends Fragment {
         mSearchResultsRecyclerView = root.findViewById(R.id.spaceImageRecyclerView);
         mSpaceImageTextRecyclerView = root.findViewById(R.id.spaceImageTextRecyclerView);
         mFavoriteIcon = root.findViewById(R.id.like);
+        mNoResults = root.findViewById(R.id.noResults);
         mDislikeTextView = root.findViewById(R.id.dislike);
 
         final NasaImageAdaptor imageAdaptor = new NasaImageAdaptor(container.getContext(), mNasaImageViewModel);
@@ -72,8 +72,13 @@ public class SearchResultsFragment extends Fragment {
             public void onChanged(@Nullable ImageDetails imageDetails) {
                 mFavoriteIcon.setVisibility(View.GONE);
                 mDislikeTextView.setVisibility(View.GONE);
-                imageAdaptor.setImageDetails(imageDetails);
-                textAdaptor.setImageDetails(imageDetails);
+                if(imageDetails == null){
+                    mNoResults.setVisibility(View.VISIBLE);
+                }else{
+                    mNoResults.setVisibility(View.GONE);
+                    imageAdaptor.setImageDetails(imageDetails);
+                    textAdaptor.setImageDetails(imageDetails);
+                }
             }
         });
         mSearchResultsRecyclerView.setOnTouchListener(new OnSwipeTouchListener(container.getContext()) {
