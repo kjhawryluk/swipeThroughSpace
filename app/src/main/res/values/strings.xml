@@ -5,5 +5,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tutorialInstructions">Hi there!\n\nIn this app, you get to explore space by searching through pictures using NASA\'s API. \n\nStart by entering a phrase about space in the search bar. When your results load, you can swipe right to favorite a picture or left to dislike it. You can then check out your favorites and disliked photos by using the menu in the top right of the app. You can always see this tutorial again by resetting it in the settings menu.\n\nHappy Travels!</string>
 
 </resources>

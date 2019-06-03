@@ -16,4 +16,10 @@
         android:orderInCategory="200"
         android:title="Show Disliked Images"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/settings"
+        android:orderInCategory="300"
+        android:title="Settings"
+        app:showAsAction="never" />
 </menu>

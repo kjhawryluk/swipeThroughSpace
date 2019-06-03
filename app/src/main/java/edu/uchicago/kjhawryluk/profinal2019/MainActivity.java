@@ -3,36 +3,35 @@ package edu.uchicago.kjhawryluk.profinal2019;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
-import android.widget.FrameLayout;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Switch;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageListAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
+import edu.uchicago.kjhawryluk.profinal2019.util.PrefsMgr;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
 public class MainActivity extends AppCompatActivity implements NasaImageListAdaptor.SwipeThroughSwipedImages {
+    public static final String TUTORIAL_SHOWN = "TUTORIAL_SHOWN";
+    private static final String USE_DARK_THEME = "USE_DARK_THEME";
 
     SearchView mSearchBar;
     NasaImageViewModel mNasaImageViewModel;
@@ -57,6 +56,12 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
             WelcomeFragment welcomeFragment = new WelcomeFragment();
             swapInFragment(welcomeFragment);
         }
+
+        // Show tutorial dialog
+        boolean bTutorialShown = PrefsMgr.getBoolean(this, TUTORIAL_SHOWN, false);
+        if (!bTutorialShown){
+            launchTutorialDialog(this);
+        }
     }
 
     @Override
@@ -77,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
             swapInFragment(swipedImagesListFragment);
             return true;
         }
+        if (id == R.id.settings) {
+            launchSettingsDialog(this);
+            return true;
+        }
+
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -112,6 +124,57 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
                 .replace(R.id.fragContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void launchTutorialDialog(Context ctx){
+        Dialog settingsDialog = new Dialog(this);
+        settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        View tutorialView = getLayoutInflater().inflate(R.layout.tutorial_dialog, null);
+        settingsDialog.setContentView(tutorialView);
+        settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                PrefsMgr.setBoolean(ctx, TUTORIAL_SHOWN, true);
+            }
+        });
+        settingsDialog.show();
+    }
+
+
+    public void launchSettingsDialog(Context ctx){
+        Dialog settingsDialog = new Dialog(this);
+        View settingsView = getLayoutInflater().inflate(R.layout.settings_dialog, null);
+        Switch themeSwitch = settingsView.findViewById(R.id.themeSwitch);
+
+        // Create and set up theme switch
+        boolean useDarkTheme = PrefsMgr.getBoolean(ctx, USE_DARK_THEME, false);
+        themeSwitch.setChecked(useDarkTheme);
+        setSwitchText(useDarkTheme, themeSwitch);
+        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setSwitchText(useDarkTheme, themeSwitch);
+            }
+        });
+
+        // Create and set up tutorial checkbox
+        CheckBox tutorialSeenCheckbox = settingsView.findViewById(R.id.tutorialSeen);
+        boolean tutorialSeen = PrefsMgr.getBoolean(ctx, TUTORIAL_SHOWN, true);
+        tutorialSeenCheckbox.setChecked(tutorialSeen);
+        tutorialSeenCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                PrefsMgr.setBoolean(ctx, TUTORIAL_SHOWN,!tutorialSeen);
+            }
+        });
+        settingsDialog.setContentView(settingsView);
+        settingsDialog.show();
+    }
+
+    private void setSwitchText(boolean useDarkTheme, Switch themeSwitch) {
+        if (!useDarkTheme) {
+            themeSwitch.setText("Light Theme");
+        }
     }
 
     public void swipeThroughSwipedImages(ImageDetails imageDetails){

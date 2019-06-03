@@ -19,6 +19,7 @@ import android.widget.TextView;
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageTextAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
+import edu.uchicago.kjhawryluk.profinal2019.util.OnSwipeTouchListener;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
 
