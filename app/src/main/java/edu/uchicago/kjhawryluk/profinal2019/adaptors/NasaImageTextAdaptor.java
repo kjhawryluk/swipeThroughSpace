@@ -1,10 +1,14 @@
 package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import edu.uchicago.kjhawryluk.profinal2019.R;
@@ -19,11 +23,13 @@ public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdap
     class NasaImageViewHolder extends RecyclerView.ViewHolder {
         private final TextView mSpaceCardTitle;
         private final TextView mSpaceCardDesc;
+        private final LinearLayout mShareButton;
         public NasaImageViewHolder(View itemView) {
             super(itemView);
 
             mSpaceCardTitle = itemView.findViewById(R.id.spaceCardTitle);
             mSpaceCardDesc = itemView.findViewById(R.id.spaceCardDesc);
+            mShareButton = itemView.findViewById(R.id.shareButton);
         }
     }
 
@@ -45,7 +51,25 @@ public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdap
             final ImageDetails current = mImageDetails;
             holder.mSpaceCardTitle.setText(current.getTitle());
             holder.mSpaceCardDesc.setText(current.getDescription());
+            holder.mShareButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareImage(current);
+                }
+            });
         }
+    }
+
+    /**
+     * Shares the currently shown image.
+     * @param current
+     */
+    private void shareImage(ImageDetails current) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, current.getUri());
+        sendIntent.setType("image/jpeg");
+        mInflater.getContext().startActivity(sendIntent);
     }
 
     @Override

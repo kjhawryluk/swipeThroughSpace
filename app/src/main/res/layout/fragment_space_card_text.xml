@@ -6,24 +6,52 @@
     android:orientation="vertical"
     tools:context=".SpaceCardFragment">
 
-    <TextView
-        android:id="@+id/spaceCardTitle"
-        android:textSize="18sp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingBottom="5dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/spaceCardTitle"
+            android:layout_width="0dp"
+            android:layout_weight="80"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="left"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="5dp"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/shareButton"
+            android:layout_width="0dp"
+            android:layout_weight="20"
+            android:paddingRight="2dp"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="@null"
+                android:src="@drawable/ic_share_black_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="Share" android:textSize="16sp"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="5dp"
-        >
+        android:paddingBottom="5dp">
 
         <ScrollView
             android:layout_width="match_parent"
