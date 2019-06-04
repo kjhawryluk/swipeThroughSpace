@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SearchResultsFragment">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="70"
+    >
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/spaceImageRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        tools:listitem="@layout/fragment_space_card_image" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+    <ImageView
+        android:id="@+id/like"
+        android:src="@drawable/ic_favorite_24dp"
+        android:visibility="gone"
+        android:textColor="@color/colorAccent"
+        android:layout_width="400dp"
+        android:layout_height="400dp"/>
+        <TextView
+            android:id="@+id/dislike"
+            android:text="@string/nope"
+            android:visibility="gone"
+            android:textSize="100sp"
+            android:textColor="#66ce63"
+            android:rotation="310"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/noResults"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <ImageView
+            android:src="@drawable/ic_sad_green_alien_whatface"
+            android:textColor="@color/colorAccent"
+            android:layout_width="390dp"
+            android:layout_height="390dp"/>
+        <TextView
+            android:id="@+id/noResultsText"
+            android:text="Do you even know space?!"
+            android:textSize="24sp"
+            android:textColor="#66ce63"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        >
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/spaceImageTextRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/fragment_space_card_text" />
+    </LinearLayout>
+
+</LinearLayout>

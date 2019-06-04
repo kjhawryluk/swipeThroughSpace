@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
     NasaImageViewModel mNasaImageViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean useDarkTheme = PrefsMgr.getBoolean(this, USE_DARK_THEME, true);
+        if(useDarkTheme) {
+            setTheme(R.style.AppTheme_Dark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mNasaImageViewModel = new NasaImageViewModel(this.getApplication());
@@ -172,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 boolean isDarkTheme = checkedId == R.id.darkThemButton;
                 PrefsMgr.setBoolean(ctx, USE_DARK_THEME, isDarkTheme);
+                // Change theme
+                recreate();
             }
         });
 
