@@ -5,20 +5,24 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import com.bumptech.glide.Glide;
@@ -32,6 +36,8 @@ import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 public class MainActivity extends AppCompatActivity implements NasaImageListAdaptor.SwipeThroughSwipedImages {
     public static final String TUTORIAL_SHOWN = "TUTORIAL_SHOWN";
     private static final String USE_DARK_THEME = "USE_DARK_THEME";
+    RadioButton darkThemeButton;
+    RadioButton lightThemeButton;
 
     SearchView mSearchBar;
     NasaImageViewModel mNasaImageViewModel;
@@ -144,16 +150,28 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
     public void launchSettingsDialog(Context ctx){
         Dialog settingsDialog = new Dialog(this);
         View settingsView = getLayoutInflater().inflate(R.layout.settings_dialog, null);
-        Switch themeSwitch = settingsView.findViewById(R.id.themeSwitch);
 
-        // Create and set up theme switch
-        boolean useDarkTheme = PrefsMgr.getBoolean(ctx, USE_DARK_THEME, false);
-        themeSwitch.setChecked(useDarkTheme);
-        setSwitchText(useDarkTheme, themeSwitch);
-        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        // Position Dialog and dim background
+        // https://stackoverflow.com/questions/9467026/changing-position-of-the-dialog-on-screen-android
+        Window window = settingsDialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.TOP;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        darkThemeButton = settingsView.findViewById(R.id.darkThemButton);
+        lightThemeButton = settingsView.findViewById(R.id.lightThemButton);
+        RadioGroup radioGroup = settingsView.findViewById(R.id.themeRadioGroup);
+
+        // Create and set up theme radio group
+        boolean useDarkTheme = PrefsMgr.getBoolean(ctx, USE_DARK_THEME, true);
+
+        setThemeButtons(useDarkTheme);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setSwitchText(useDarkTheme, themeSwitch);
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                boolean isDarkTheme = checkedId == R.id.darkThemButton;
+                PrefsMgr.setBoolean(ctx, USE_DARK_THEME, isDarkTheme);
             }
         });
 
@@ -171,9 +189,11 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         settingsDialog.show();
     }
 
-    private void setSwitchText(boolean useDarkTheme, Switch themeSwitch) {
+    private void setThemeButtons(boolean useDarkTheme) {
         if (!useDarkTheme) {
-            themeSwitch.setText("Light Theme");
+            lightThemeButton.setChecked(true);
+        } else{
+            darkThemeButton.setChecked(true);
         }
     }
 

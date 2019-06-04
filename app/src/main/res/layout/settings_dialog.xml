@@ -3,26 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="24dp"
+
+    >
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="Settings"
     android:textSize="24sp"
+    android:padding="10dp"
     android:layout_gravity="center"/>
 
-    <Switch
-        android:id="@+id/themeSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_weight="1"
-        android:text="Dark Theme" />
+    <RadioGroup
+        android:id="@+id/themeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RadioButton
+            android:id="@+id/lightThemButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Light Theme" />
+
+        <RadioButton
+            android:id="@+id/darkThemButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:text="Dark Theme" />
+    </RadioGroup>
 
     <CheckBox
         android:id="@+id/tutorialSeen"
-        android:text="Tutorial Shown"
         android:textSize="16sp"
+        android:textColor="@color/textPrimary"
+        android:padding="10dp"
+        android:text="Tutorial Shown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>
