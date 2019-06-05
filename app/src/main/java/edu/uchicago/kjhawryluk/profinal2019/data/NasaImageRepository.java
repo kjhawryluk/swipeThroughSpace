@@ -8,13 +8,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Stack;
-
 import edu.uchicago.kjhawryluk.profinal2019.data.local.NasaImageDatabase;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.dao.ImageDetailsDao;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.dao.QueryDao;
@@ -23,12 +18,10 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.ApiConstants;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.NasaImageRestService;
 import edu.uchicago.kjhawryluk.profinal2019.data.remote.model.NasaImageQueryResponse;
-import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -45,7 +38,6 @@ public class NasaImageRepository {
     public static final CompositeDisposable compositeDisposable = new CompositeDisposable();
     public MutableLiveData<Stack<ImageDetails>> mQueriedImages;
     private MutableLiveData<ImageDetails> mTopImageOfStack;
-    private LiveData<List<String>> mSwipedImages;
 
     private NasaImageRepository(Application application) {
         this.mNasaImageDatabase = NasaImageDatabase.getDatabase(application);
@@ -54,7 +46,6 @@ public class NasaImageRepository {
         this.mNasaImageRestService = getNasaImageRestService();
         this.mQueriedImages = new MutableLiveData<>();
         this.mTopImageOfStack = new MutableLiveData<>();
-        this.mSwipedImages = loadSwipedImageIds();
     }
 
     public static NasaImageRepository getInstance(Application application) {
@@ -86,8 +77,15 @@ public class NasaImageRepository {
         queryImages(query, pageNum, prevPageImages);
     }
 
+    /**
+     * Calls api, gets results, filters out previously swiped images, and updates the mutable
+     * live data to show the results.
+     *
+     * @param query
+     * @param pageNum
+     * @param prevPageImages
+     */
     private void queryImages(final String query, final int pageNum, final Stack<ImageDetails> prevPageImages) {
-
         mNasaImageRestService.searchImages(query, pageNum, MEDIA_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -99,35 +97,13 @@ public class NasaImageRepository {
 
                     @Override
                     public void onSuccess(NasaImageQueryResponse queryResponse) {
-                        Stack<ImageDetails> imageDetailList = queryResponse.getAllImageDetails();
-
-                        // Add only the images that haven't been swiped.
-                        prevPageImages.addAll(filterSwipedImages(imageDetailList));
-
-                        int nextPageNum = queryResponse.getNextPageNum(pageNum);
-                        // Set the list and pop the first image upon the first results
-                        if (pageNum == 1) {
-                            // Update UI
-                            mQueriedImages.setValue(prevPageImages);
-                            loadNextImage();
-                            prevPageImages.empty();
-                        }
-
-                        // Exit if no images to return.
-                        if(prevPageImages.empty())
-                            return;
-
-                        // Get the rest of the images and set update the stack at the end
-                        // don't pop from it though because that already happened.
-                        if (nextPageNum > -1) {
-                            queryImages(query, nextPageNum, prevPageImages);
-                        } else {
-                            // Update UI
-                            prevPageImages.addAll(mQueriedImages.getValue());
-                            mQueriedImages.setValue(prevPageImages);
-                            new SaveQueryAsyncTask(mQueryDao).execute(query);
-                        }
-
+                        // Send to background thread to deal with filtering responses.
+                        new UpdateImagesFromResponseAsyncTask(
+                                mImageDetailsDao,
+                                queryResponse,
+                                prevPageImages,
+                                pageNum,
+                                query).execute();
                     }
 
                     @Override
@@ -138,8 +114,80 @@ public class NasaImageRepository {
                 });
     }
 
+    private class UpdateImagesFromResponseAsyncTask extends AsyncTask<Void, Void, Stack<ImageDetails>> {
+
+        private ImageDetailsDao mImageDetailsDao;
+        private NasaImageQueryResponse mNasaImageQueryResponse;
+        private Stack<ImageDetails> mPrevPageImages;
+        private int mPageNum;
+        private String mQuery;
+
+        UpdateImagesFromResponseAsyncTask(ImageDetailsDao dao,
+                                          NasaImageQueryResponse queryResponse,
+                                          Stack<ImageDetails> prevPageImages,
+                                          int pageNum, String query) {
+            mImageDetailsDao = dao;
+            mNasaImageQueryResponse = queryResponse;
+            mPrevPageImages = prevPageImages;
+            mPageNum = pageNum;
+            mQuery = query;
+        }
+
+        @Override
+        protected Stack<ImageDetails> doInBackground(Void... voids) {
+            return getImageDetailsFromResponse();
+        }
+
+
+        private Stack<ImageDetails> getImageDetailsFromResponse() {
+            Stack<ImageDetails> imageDetailList = mNasaImageQueryResponse.getAllImageDetails();
+
+            // Add only the images that haven't been swiped.
+            mPrevPageImages.addAll(filterSwipedImages(imageDetailList));
+            return imageDetailList;
+
+        }
+
+        @Override
+        protected void onPostExecute(Stack<ImageDetails> imageDetails) {
+            super.onPostExecute(imageDetails);
+
+            int nextPageNum = mNasaImageQueryResponse.getNextPageNum(mPageNum);
+
+            // Set the list and pop the first image upon the first results
+            if (mPageNum == 1) {
+                // Update UI
+                mQueriedImages.setValue(mPrevPageImages);
+                loadNextImage();
+                mPrevPageImages.empty();
+            }
+
+            // Exit if no images to return.
+            if (mPrevPageImages.empty())
+                return;
+
+            // Get the rest of the images and set update the stack at the end
+            // don't pop from it though because that already happened.
+            if (nextPageNum > -1) {
+                queryImages(mQuery, nextPageNum, mPrevPageImages);
+            } else {
+                // Update UI
+                mPrevPageImages.addAll(mQueriedImages.getValue());
+                mQueriedImages.setValue(mPrevPageImages);
+                new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
+            }
+        }
+    }
+
+    /**
+     * Filters a stack of images to not include previously swiped images.
+     * This is called off the UI thread.
+     *
+     * @param pulledImages
+     * @return
+     */
     private Stack<ImageDetails> filterSwipedImages(Stack<ImageDetails> pulledImages) {
-        List<String> swipedImages = mSwipedImages.getValue();
+        List<ImageDetails> swipedImages = loadAllSwipedImages();
 
         //First query so nothing to filter.
         if (swipedImages == null)
@@ -147,8 +195,9 @@ public class NasaImageRepository {
 
         Stack<ImageDetails> newImages = new Stack<>();
         for (ImageDetails pulledImage : pulledImages) {
-            if (!swipedImages.contains(pulledImage.getNasaId()))
+            if (!swipedImages.contains(pulledImage)) {
                 newImages.add(pulledImage);
+            }
         }
         return newImages;
     }
@@ -186,7 +235,6 @@ public class NasaImageRepository {
         }
     }
 
-
     public LiveData<List<ImageDetails>> loadFavoriteImages() {
         return mImageDetailsDao.loadFavoriteImages();
     }
@@ -195,8 +243,8 @@ public class NasaImageRepository {
         return mImageDetailsDao.loadDislikedImages();
     }
 
-    public LiveData<List<String>> loadSwipedImageIds() {
-        return mImageDetailsDao.loadSwipedImageIds();
+    public List<ImageDetails> loadAllSwipedImages() {
+        return mImageDetailsDao.loadAllSwipedImages();
     }
 
     public LiveData<List<ImageQuery>> loadQueryHistory() {
@@ -252,9 +300,10 @@ public class NasaImageRepository {
 
     /**
      * https://developer.android.com/training/monitoring-device-state/connectivity-monitoring
+     *
      * @return
      */
-    public boolean isInternetAvailable(Application application) {
+    public static boolean isInternetAvailable(Application application) {
         ConnectivityManager cm =
                 (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
 

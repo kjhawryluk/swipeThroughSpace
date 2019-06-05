@@ -7,6 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.net.URISyntaxException;
@@ -201,5 +202,23 @@ public class ImageDetails {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj != null) {
+            if (obj instanceof String) {
+                return obj.equals(nasaId);
+            } else if (obj instanceof ImageDetails) {
+                ImageDetails objEntity = (ImageDetails) obj;
+                return objEntity.getNasaId().equals(nasaId);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return nasaId.hashCode();
     }
 }

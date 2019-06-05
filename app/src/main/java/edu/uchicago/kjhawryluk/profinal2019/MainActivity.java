@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Switch;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -33,14 +32,17 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.util.PrefsMgr;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
+import static edu.uchicago.kjhawryluk.profinal2019.data.NasaImageRepository.isInternetAvailable;
+
 public class MainActivity extends AppCompatActivity implements NasaImageListAdaptor.SwipeThroughSwipedImages {
     public static final String TUTORIAL_SHOWN = "TUTORIAL_SHOWN";
     private static final String USE_DARK_THEME = "USE_DARK_THEME";
+    public static final String INTERNET_DISCONNECTED = "Cannot search. Internet disconnected.";
     RadioButton darkThemeButton;
     RadioButton lightThemeButton;
-
     SearchView mSearchBar;
     NasaImageViewModel mNasaImageViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean useDarkTheme = PrefsMgr.getBoolean(this, USE_DARK_THEME, true);
@@ -54,23 +56,38 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            // If there's an actual query, process it.
-            if(query != null && !query.isEmpty()) {
-                mNasaImageViewModel.queryNasaImages(query);
-                SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-                swapInFragment(searchResultsFragment);
-                getIntent().removeExtra(SearchManager.QUERY);
-            }
+            processSearch(intent);
         } else{
-            WelcomeFragment welcomeFragment = new WelcomeFragment();
-            swapInFragment(welcomeFragment);
+            showWelcomeFrag();
         }
 
         // Show tutorial dialog
         boolean bTutorialShown = PrefsMgr.getBoolean(this, TUTORIAL_SHOWN, false);
         if (!bTutorialShown){
             launchTutorialDialog(this);
+        }
+    }
+
+    private void showWelcomeFrag() {
+        WelcomeFragment welcomeFragment = new WelcomeFragment();
+        swapInFragment(welcomeFragment);
+    }
+
+    private void processSearch(Intent intent) {
+        // Cannot launch search. Show welcome and notify user.
+        if(!isInternetAvailable(getApplication())){
+            showWelcomeFrag();
+            Toast.makeText(this, INTERNET_DISCONNECTED, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String query = intent.getStringExtra(SearchManager.QUERY);
+        // If there's an actual query, process it.
+        if(query != null && !query.isEmpty()) {
+            mNasaImageViewModel.queryNasaImages(query);
+            SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+            swapInFragment(searchResultsFragment);
+            getIntent().removeExtra(SearchManager.QUERY);
         }
     }
 

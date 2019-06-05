@@ -12,7 +12,7 @@ import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 
 @Dao
 public interface QueryDao {
-    @Query("SELECT * FROM QueryLog ORDER BY queryTimestamp desc")
+    @Query("SELECT * FROM QueryLog ORDER BY queryTimestamp desc limit 10")
     LiveData<List<ImageQuery>> loadQueryHistory();
 
     @Query("SELECT * FROM QueryLog ORDER BY queryTimestamp desc limit 1")

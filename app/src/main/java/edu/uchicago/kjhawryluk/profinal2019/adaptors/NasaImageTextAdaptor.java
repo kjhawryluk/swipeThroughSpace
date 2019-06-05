@@ -26,7 +26,6 @@ public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdap
         private final LinearLayout mShareButton;
         public NasaImageViewHolder(View itemView) {
             super(itemView);
-
             mSpaceCardTitle = itemView.findViewById(R.id.spaceCardTitle);
             mSpaceCardDesc = itemView.findViewById(R.id.spaceCardDesc);
             mShareButton = itemView.findViewById(R.id.shareButton);

@@ -21,8 +21,8 @@ public interface ImageDetailsDao {
     @Query("SELECT * FROM SwipedImages WHERE isFavorite = 0 ORDER BY title")
     LiveData<List<ImageDetails>> loadDislikedImages();
 
-    @Query("SELECT nasaId FROM SwipedImages")
-    LiveData<List<String>> loadSwipedImageIds();
+    @Query("SELECT * FROM SwipedImages")
+    List<ImageDetails> loadAllSwipedImages();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Long saveFavoriteImage(ImageDetails imageDetails);
