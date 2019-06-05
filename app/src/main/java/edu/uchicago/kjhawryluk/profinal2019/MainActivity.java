@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
     public static final String TUTORIAL_SHOWN = "TUTORIAL_SHOWN";
     private static final String USE_DARK_THEME = "USE_DARK_THEME";
     public static final String INTERNET_DISCONNECTED = "Cannot search. Internet disconnected.";
+    public static final String USE_SEARCH_BAR_MSG = "Enter a search in the search bar.";
     RadioButton darkThemeButton;
     RadioButton lightThemeButton;
     SearchView mSearchBar;
@@ -73,6 +74,11 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         swapInFragment(welcomeFragment);
     }
 
+    private void showSearchResultsFrag() {
+        SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+        swapInFragment(searchResultsFragment);
+    }
+
     private void processSearch(Intent intent) {
         // Cannot launch search. Show welcome and notify user.
         if(!isInternetAvailable(getApplication())){
@@ -85,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         // If there's an actual query, process it.
         if(query != null && !query.isEmpty()) {
             mNasaImageViewModel.queryNasaImages(query);
-            SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
-            swapInFragment(searchResultsFragment);
+            showSearchResultsFrag();
             getIntent().removeExtra(SearchManager.QUERY);
         }
     }
@@ -97,6 +102,15 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (id == R.id.showSearchResults) {
+            if(mNasaImageViewModel.getTopImageOfStack().getValue() != null){
+                showSearchResultsFrag();
+            } else {
+                Toast.makeText(this, USE_SEARCH_BAR_MSG, Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.showFavorites) {
