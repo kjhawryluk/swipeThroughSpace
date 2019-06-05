@@ -21,10 +21,14 @@
         android:orderInCategory="300"
         android:title="Disliked Images"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/queryHistory"
+        android:orderInCategory="400"
+        android:title="Previous Searches"
+        app:showAsAction="never" />
     <item
         android:id="@+id/settings"
-        android:orderInCategory="400"
+        android:orderInCategory="500"
         android:title="Settings"
         app:showAsAction="never" />
 </menu>

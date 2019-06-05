@@ -37,6 +37,8 @@ public class NasaImageViewModel extends AndroidViewModel {
         mNasaImageRepository.queryImages(query);
     }
 
+    public void deleteQuery(ImageQuery imageQuery) {mNasaImageRepository.deleteQuery(imageQuery);}
+
     public LiveData<List<ImageDetails>> getFavoriteImages() {
         return mFavoriteImages;
     }

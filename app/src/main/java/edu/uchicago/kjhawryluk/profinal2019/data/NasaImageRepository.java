@@ -81,6 +81,11 @@ public class NasaImageRepository {
      * Calls api, gets results, filters out previously swiped images, and updates the mutable
      * live data to show the results.
      *
+     * Note: Due to a bug in the emulator, when you type in a query using your computer's
+     * keyboard, it will process the query twice. If you do it on your phone or with the
+     * soft keyboard, you will not face this issue. This largely just affects the
+     * query history.
+     *
      * @param query
      * @param pageNum
      * @param prevPageImages
@@ -99,7 +104,6 @@ public class NasaImageRepository {
                     public void onSuccess(NasaImageQueryResponse queryResponse) {
                         // Send to background thread to deal with filtering responses.
                         new UpdateImagesFromResponseAsyncTask(
-                                mImageDetailsDao,
                                 queryResponse,
                                 prevPageImages,
                                 pageNum,
@@ -116,17 +120,15 @@ public class NasaImageRepository {
 
     private class UpdateImagesFromResponseAsyncTask extends AsyncTask<Void, Void, Stack<ImageDetails>> {
 
-        private ImageDetailsDao mImageDetailsDao;
         private NasaImageQueryResponse mNasaImageQueryResponse;
         private Stack<ImageDetails> mPrevPageImages;
         private int mPageNum;
         private String mQuery;
 
-        UpdateImagesFromResponseAsyncTask(ImageDetailsDao dao,
+        UpdateImagesFromResponseAsyncTask(
                                           NasaImageQueryResponse queryResponse,
                                           Stack<ImageDetails> prevPageImages,
                                           int pageNum, String query) {
-            mImageDetailsDao = dao;
             mNasaImageQueryResponse = queryResponse;
             mPrevPageImages = prevPageImages;
             mPageNum = pageNum;
@@ -160,6 +162,7 @@ public class NasaImageRepository {
                 mQueriedImages.setValue(mPrevPageImages);
                 loadNextImage();
                 mPrevPageImages.empty();
+                new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
             }
 
             // Exit if no images to return.
@@ -174,7 +177,6 @@ public class NasaImageRepository {
                 // Update UI
                 mPrevPageImages.addAll(mQueriedImages.getValue());
                 mQueriedImages.setValue(mPrevPageImages);
-                new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
             }
         }
     }
@@ -219,6 +221,21 @@ public class NasaImageRepository {
         }
     }
 
+    private static class DeleteQueryAsyncTask extends AsyncTask<ImageQuery, Void, Void> {
+
+        private QueryDao mQueryDao;
+
+        DeleteQueryAsyncTask(QueryDao dao) {
+            mQueryDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final ImageQuery... imageQueries) {
+            mQueryDao.deleteQuery(imageQueries[0]);
+            return null;
+        }
+    }
+
     private static class SaveFavoriteAsyncTask extends AsyncTask<ImageDetails, Void, Void> {
 
         private ImageDetailsDao mFavoriteDao;
@@ -233,6 +250,10 @@ public class NasaImageRepository {
             mFavoriteDao.saveFavoriteImage(imageDetails);
             return null;
         }
+    }
+
+    public void deleteQuery(ImageQuery imageQuery) {
+        new DeleteQueryAsyncTask(mQueryDao).execute(imageQuery);
     }
 
     public LiveData<List<ImageDetails>> loadFavoriteImages() {

@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
     RadioButton lightThemeButton;
     SearchView mSearchBar;
     NasaImageViewModel mNasaImageViewModel;
+    private Dialog mSettingsDialog;
+    private Dialog mTutorialDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,13 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
             swapInFragment(swipedImagesListFragment);
             return true;
         }
+
+        if (id == R.id.queryHistory) {
+            SearchHistoryFragment searchHistoryFragment = new SearchHistoryFragment();
+            swapInFragment(searchHistoryFragment);
+            return true;
+        }
+
         if (id == R.id.settings) {
             launchSettingsDialog(this);
             return true;
@@ -168,27 +177,27 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
     }
 
     public void launchTutorialDialog(Context ctx){
-        Dialog settingsDialog = new Dialog(this);
-        settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        mTutorialDialog = new Dialog(this);
+        mTutorialDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         View tutorialView = getLayoutInflater().inflate(R.layout.tutorial_dialog, null);
-        settingsDialog.setContentView(tutorialView);
-        settingsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+        mTutorialDialog.setContentView(tutorialView);
+        mTutorialDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 PrefsMgr.setBoolean(ctx, TUTORIAL_SHOWN, true);
             }
         });
-        settingsDialog.show();
+        mTutorialDialog.show();
     }
 
 
     public void launchSettingsDialog(Context ctx){
-        Dialog settingsDialog = new Dialog(this);
+        mSettingsDialog = new Dialog(this);
         View settingsView = getLayoutInflater().inflate(R.layout.settings_dialog, null);
 
         // Position Dialog and dim background
         // https://stackoverflow.com/questions/9467026/changing-position-of-the-dialog-on-screen-android
-        Window window = settingsDialog.getWindow();
+        Window window = mSettingsDialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.gravity = Gravity.TOP;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
@@ -222,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
                 PrefsMgr.setBoolean(ctx, TUTORIAL_SHOWN,!tutorialSeen);
             }
         });
-        settingsDialog.setContentView(settingsView);
-        settingsDialog.show();
+        mSettingsDialog.setContentView(settingsView);
+        mSettingsDialog.show();
     }
 
     private void setThemeButtons(boolean useDarkTheme) {
@@ -251,5 +260,20 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
         settingsDialog.setContentView(spaceImageLayout);
 
         settingsDialog.show();
+    }
+
+    //https://stackoverflow.com/questions/35738795/android-window-manager-android-view-window-leaked
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mSettingsDialog != null) {
+            mSettingsDialog.dismiss();
+            mSettingsDialog = null;
+        }
+
+        if (mTutorialDialog != null) {
+            mTutorialDialog.dismiss();
+            mTutorialDialog = null;
+        }
     }
 }
