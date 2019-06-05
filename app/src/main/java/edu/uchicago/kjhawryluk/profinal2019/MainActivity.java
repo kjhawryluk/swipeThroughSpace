@@ -23,10 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageListAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.util.PrefsMgr;
@@ -136,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements NasaImageListAdap
             launchSettingsDialog(this);
             return true;
         }
-
-
 
         return super.onOptionsItemSelected(item);
     }

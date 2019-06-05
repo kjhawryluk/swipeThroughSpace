@@ -1,7 +1,5 @@
 package edu.uchicago.kjhawryluk.profinal2019.util;
 
-
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -67,7 +65,6 @@ public class PrefsMgr {
         return sSharedPreferences.getInt(key, defaultValue);
 
     }
-
 
     public static void setBoolean(Context context, String key, boolean bVal) {
         sSharedPreferences =

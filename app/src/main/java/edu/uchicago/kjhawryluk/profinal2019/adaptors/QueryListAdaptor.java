@@ -3,23 +3,15 @@ package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.CountDownTimer;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import java.util.List;
-
 import edu.uchicago.kjhawryluk.profinal2019.MainActivity;
 import edu.uchicago.kjhawryluk.profinal2019.R;
-import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 

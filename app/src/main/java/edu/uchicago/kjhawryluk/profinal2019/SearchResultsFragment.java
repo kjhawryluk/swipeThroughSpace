@@ -1,6 +1,5 @@
 package edu.uchicago.kjhawryluk.profinal2019;
 
-
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.adaptors.NasaImageTextAdaptor;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;

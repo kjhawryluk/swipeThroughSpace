@@ -4,10 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-
 import java.util.List;
 import java.util.Stack;
-
 import edu.uchicago.kjhawryluk.profinal2019.data.NasaImageRepository;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageQuery;

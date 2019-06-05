@@ -9,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import edu.uchicago.kjhawryluk.profinal2019.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.profinal2019.viewmodels.NasaImageViewModel;
 
@@ -45,7 +43,6 @@ public class SpaceCardFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-       // setNextImage();
         if(mImageDetails != null)
             setCardValues();
     }
@@ -62,10 +59,4 @@ public class SpaceCardFragment extends Fragment {
                 .dontAnimate()
                 .into(mSpaceCardImage);
     }
-
-//    public void setNextImage(){
-//        if(mNasaImageViewModel != null){
-//            mImageDetails = mNasaImageViewModel.popImage();
-//        }
-//    }
 }

@@ -118,6 +118,12 @@ public class NasaImageRepository {
                 });
     }
 
+    /**
+     * This takes a response and filters out the already swiped images.
+     * If it's the first page, it updates the mutable data to show the results.
+     * If it's not, it keeps grabbing the rest of the results and updates the stack
+     * at the end.
+     */
     private class UpdateImagesFromResponseAsyncTask extends AsyncTask<Void, Void, Stack<ImageDetails>> {
 
         private NasaImageQueryResponse mNasaImageQueryResponse;
@@ -321,7 +327,6 @@ public class NasaImageRepository {
 
     /**
      * https://developer.android.com/training/monitoring-device-state/connectivity-monitoring
-     *
      * @return
      */
     public static boolean isInternetAvailable(Application application) {
