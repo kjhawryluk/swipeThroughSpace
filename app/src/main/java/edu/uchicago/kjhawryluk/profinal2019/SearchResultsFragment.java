@@ -73,8 +73,12 @@ public class SearchResultsFragment extends Fragment {
                 mDislikeTextView.setVisibility(View.GONE);
                 if(imageDetails == null){
                     mNoResults.setVisibility(View.VISIBLE);
+                    mSearchResultsRecyclerView.setVisibility(View.INVISIBLE);
+                    mSpaceImageTextRecyclerView.setVisibility(View.INVISIBLE);
                 }else{
                     mNoResults.setVisibility(View.GONE);
+                    mSearchResultsRecyclerView.setVisibility(View.VISIBLE);
+                    mSpaceImageTextRecyclerView.setVisibility(View.VISIBLE);
                     imageAdaptor.setImageDetails(imageDetails);
                     textAdaptor.setImageDetails(imageDetails);
                 }
