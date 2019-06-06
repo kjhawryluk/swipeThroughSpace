@@ -38,6 +38,7 @@ public class NasaImageRepository {
     public static final CompositeDisposable compositeDisposable = new CompositeDisposable();
     public MutableLiveData<Stack<ImageDetails>> mQueriedImages;
     private MutableLiveData<ImageDetails> mTopImageOfStack;
+    private String mQuery;
 
     private NasaImageRepository(Application application) {
         this.mNasaImageDatabase = NasaImageDatabase.getDatabase(application);
@@ -74,6 +75,7 @@ public class NasaImageRepository {
         mQueriedImages.setValue(new Stack<ImageDetails>());
         Stack<ImageDetails> prevPageImages = new Stack<>();
         int pageNum = 1;
+        mQuery = query;
         queryImages(query, pageNum, prevPageImages);
     }
 
@@ -129,16 +131,16 @@ public class NasaImageRepository {
         private NasaImageQueryResponse mNasaImageQueryResponse;
         private Stack<ImageDetails> mPrevPageImages;
         private int mPageNum;
-        private String mQuery;
+        private String mCurrentQuery;
 
         UpdateImagesFromResponseAsyncTask(
                                           NasaImageQueryResponse queryResponse,
                                           Stack<ImageDetails> prevPageImages,
-                                          int pageNum, String query) {
+                                          int pageNum, String currentQuery) {
             mNasaImageQueryResponse = queryResponse;
             mPrevPageImages = prevPageImages;
             mPageNum = pageNum;
-            mQuery = query;
+            mCurrentQuery = currentQuery;
         }
 
         @Override
@@ -160,6 +162,11 @@ public class NasaImageRepository {
         protected void onPostExecute(Stack<ImageDetails> imageDetails) {
             super.onPostExecute(imageDetails);
 
+            // By the time they finished the query, the user asked for
+            // different images. Therefore, exit early.
+            if(!mQuery.equals(mCurrentQuery))
+                return;
+
             int nextPageNum = mNasaImageQueryResponse.getNextPageNum(mPageNum);
 
             // Set the list and pop the first image upon the first results
@@ -168,7 +175,7 @@ public class NasaImageRepository {
                 mQueriedImages.setValue(mPrevPageImages);
                 loadNextImage();
                 mPrevPageImages.empty();
-                new SaveQueryAsyncTask(mQueryDao).execute(mQuery);
+                new SaveQueryAsyncTask(mQueryDao).execute(mCurrentQuery);
             }
 
             // Exit if no images to return.
@@ -178,7 +185,7 @@ public class NasaImageRepository {
             // Get the rest of the images and set update the stack at the end
             // don't pop from it though because that already happened.
             if (nextPageNum > -1) {
-                queryImages(mQuery, nextPageNum, mPrevPageImages);
+                queryImages(mCurrentQuery, nextPageNum, mPrevPageImages);
             } else {
                 // Update UI
                 mPrevPageImages.addAll(mQueriedImages.getValue());

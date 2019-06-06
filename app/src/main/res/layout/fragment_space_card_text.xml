@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,9 +15,9 @@
         <TextView
             android:id="@+id/spaceCardTitle"
             android:layout_width="0dp"
-            android:layout_weight="80"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
+            android:layout_weight="80"
             android:gravity="left"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -26,10 +27,10 @@
         <LinearLayout
             android:id="@+id/shareButton"
             android:layout_width="0dp"
-            android:layout_weight="20"
-            android:paddingRight="2dp"
             android:layout_height="wrap_content"
-            android:gravity="right">
+            android:layout_weight="20"
+            android:gravity="right"
+            android:paddingRight="2dp">
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -42,7 +43,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
-                android:text="Share" android:textSize="16sp"/>
+                android:text="Share"
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -53,17 +55,13 @@
         android:paddingRight="16dp"
         android:paddingBottom="5dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/spaceCardDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            />
 
-            <TextView
-                android:id="@+id/spaceCardDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left" />
-
-        </ScrollView>
     </LinearLayout>
 
 </LinearLayout>

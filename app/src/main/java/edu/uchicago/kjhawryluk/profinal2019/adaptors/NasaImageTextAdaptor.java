@@ -2,10 +2,16 @@ package edu.uchicago.kjhawryluk.profinal2019.adaptors;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.uchicago.kjhawryluk.profinal2019.R;
@@ -50,6 +56,30 @@ public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdap
                 @Override
                 public void onClick(View v) {
                     shareImage(current);
+                }
+            });
+
+            // Reset Ellipses
+            holder.mSpaceCardDesc.setMaxLines(100);
+            holder.mSpaceCardDesc.setEllipsize(null);
+
+            //https://stackoverflow.com/questions/2876116/how-to-find-out-if-textview-text-content-has-been-cut-off
+            holder.mSpaceCardDesc.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    ViewTreeObserver obs = holder.mSpaceCardDesc.getViewTreeObserver();
+                    obs.removeOnGlobalLayoutListener(this);
+                    int height = holder.mSpaceCardDesc.getHeight();
+                    int scrollY = holder.mSpaceCardDesc.getScrollY();
+                    Layout layout = holder.mSpaceCardDesc.getLayout();
+                    //check is latest line fully visible
+                    int lastVisibleLineNumber = layout.getLineForVertical(height + scrollY);
+
+                    // If it's overflowing, truncate it.
+                    if (holder.mSpaceCardDesc.getHeight() < layout.getLineBottom(lastVisibleLineNumber)) {
+                        holder.mSpaceCardDesc.setMaxLines(lastVisibleLineNumber);
+                        holder.mSpaceCardDesc.setEllipsize(TextUtils.TruncateAt.END);
+                    }
                 }
             });
         }
