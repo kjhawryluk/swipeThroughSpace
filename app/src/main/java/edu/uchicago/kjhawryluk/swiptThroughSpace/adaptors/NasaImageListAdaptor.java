@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.viewmodels.NasaImageViewModel;
 

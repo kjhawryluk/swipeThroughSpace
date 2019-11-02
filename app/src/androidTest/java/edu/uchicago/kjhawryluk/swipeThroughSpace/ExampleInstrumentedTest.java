@@ -1,4 +1,4 @@
-package edu.uchicago.kjhawryluk.profinal2019;
+package edu.uchicago.kjhawryluk.swipeThroughSpace;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

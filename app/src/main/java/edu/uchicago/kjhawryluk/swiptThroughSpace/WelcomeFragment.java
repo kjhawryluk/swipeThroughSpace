@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 
 
 public class WelcomeFragment extends Fragment {

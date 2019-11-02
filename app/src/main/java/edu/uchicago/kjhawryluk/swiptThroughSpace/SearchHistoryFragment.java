@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.adaptors.QueryListAdaptor;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.viewmodels.NasaImageViewModel;

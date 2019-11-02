@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import java.util.List;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.MainActivity;
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageQuery;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.viewmodels.NasaImageViewModel;
 

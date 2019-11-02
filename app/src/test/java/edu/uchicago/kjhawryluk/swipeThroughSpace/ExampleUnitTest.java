@@ -1,4 +1,4 @@
-package edu.uchicago.kjhawryluk.profinal2019;
+package edu.uchicago.kjhawryluk.swipeThroughSpace;
 
 import org.junit.Test;
 

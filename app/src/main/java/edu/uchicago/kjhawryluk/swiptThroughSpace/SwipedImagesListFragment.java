@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import java.util.List;
 
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.adaptors.NasaImageListAdaptor;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageDetails;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.viewmodels.NasaImageViewModel;

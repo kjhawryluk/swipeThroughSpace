@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.adaptors.NasaImageAdaptor;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.adaptors.NasaImageTextAdaptor;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageDetails;

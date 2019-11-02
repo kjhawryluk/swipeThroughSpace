@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import edu.uchicago.kjhawryluk.profinal2019.R;
+import edu.uchicago.kjhawryluk.swipeThroughSpace.R;
 import edu.uchicago.kjhawryluk.swiptThroughSpace.data.local.entity.ImageDetails;
 
 public class NasaImageTextAdaptor extends RecyclerView.Adapter<NasaImageTextAdaptor.NasaImageViewHolder> {
