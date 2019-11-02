@@ -1,12 +1,13 @@
 Welcome to Swipe Through Space!
 
-For my final project, I created an app that can be thought of as "Tinder 
-for Nasa pictures". When you enter my app, you can search for a space 
-topic of your choosing in the top bar. My app calls Nasa's image api and 
-returns images that are relevant to that topic. You can then swipe right 
-on the pictures you like to favorite them or left if you dislike them. 
-Also, feel free to share a picture with your friends by pressing the
-share button underneath the photo (in portrait mode only). 
+For this project, I created an app to let users search for pictures of
+space and swipe to favorite/skip them. When you enter my app, you can 
+search for a space topic of your choosing in the top bar. My app calls 
+Nasa's image api and returns images that are relevant to that topic. 
+You can then swipe right on the pictures you like to favorite them or 
+left if you dislike them. Also, feel free to share a picture with your 
+friends by pressing the share button underneath the photo 
+(in portrait mode only). 
 
 After you're done swiping through pictures, you can use the options menu 
 to choose to see your favorites or disliked photos. You can then tap the 
