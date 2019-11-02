@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".SpaceCardFragment">
+    tools:context="edu.uchicago.kjhawryluk.swiptThroughSpace.SpaceCardFragment">
 
         <ImageView
             android:id="@+id/spaceCardImageDialog"

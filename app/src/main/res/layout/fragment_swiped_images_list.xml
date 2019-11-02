@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SwipedImagesListFragment">
+    tools:context="edu.uchicago.kjhawryluk.swiptThroughSpace.SwipedImagesListFragment">
 <TextView
     android:id="@+id/swipedImagesListTitle"
     android:layout_width="match_parent"

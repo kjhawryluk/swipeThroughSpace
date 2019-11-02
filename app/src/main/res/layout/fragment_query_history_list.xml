@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SearchHistoryFragment">
+    tools:context="edu.uchicago.kjhawryluk.swiptThroughSpace.SearchHistoryFragment">
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
